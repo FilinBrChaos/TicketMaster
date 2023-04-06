@@ -1,0 +1,7 @@
+{
+    "postgresHost": "localhost",
+    "postgresPort": "5432",
+    "postgresDatabase": "admin",
+    "postgresUser": "admin",
+    "postgresPassword": "admin"
+}

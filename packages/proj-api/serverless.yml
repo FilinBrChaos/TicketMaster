@@ -4,6 +4,8 @@ frameworkVersion: '3'
 
 package:
   individually: true
+  include:
+  - index.ts
 
 provider:
   profile: LOCAL-USE-ONLY
@@ -12,59 +14,29 @@ provider:
 
 custom:
   serverless-offline:
-    httpPort: 3031
-    lambdaPort: 3041
+    host: 0.0.0.0
+    httpPort: 3034
+    useChildProcesses: true
     reloadHandler: true
   esbuild:
     exclude: ['pg-native', 'superagent-proxy']
 
 functions:
   register:
-    handler: src/test/index
+    handler: src/test/index.index
     timeout: 60
     environment:
-      postgresHost:                     ${file(../infrastructure/api-config.json):postgresHost}
-      #postgresReaderHost:                     ${file(../infrastructure/zapehr-config.json):postgresReaderHost}
-      postgresPort:                     ${file(../infrastructure/api-config.json):postgresPort}
-      postgresDatabase:                 ${file(../infrastructure/api-config.json):postgresDatabase}
-      postgresUser:                  ${file(../infrastructure/api-config.json):postgresUser}
-      postgresPassword:              ${file(../infrastructure/api-config.json):postgresPassword}
-      #integrationTest:                  ${strToBool(${param:integrationTest, false})}
-      #customAuthorizerAudience:         ${file(../infrastructure/zapehr-config.json):customAuthorizerAudience}
-      #reactAppOrigin:                   ${file(../infrastructure/api-config.json):reactAppOrigin}
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
           path: test
           method: GET
           cors: true
 
-  # register:
-  #   handler: src/functions/register/index.index
-  #   timeout: 60
-  #   environment:
-  #     postgresHost:                     ${file(../infrastructure/zapehr-config.json):postgresHost}
-  #     postgresReaderHost:                     ${file(../infrastructure/zapehr-config.json):postgresReaderHost}
-  #     postgresPort:                     ${file(../infrastructure/zapehr-config.json):postgresPort}
-  #     postgresDatabase:                 ${file(../infrastructure/zapehr-config.json):postgresDatabase}
-  #     postgresApiUser:                  ${file(../infrastructure/zapehr-config.json):postgresApiUser}
-  #     postgresApiPassword:              ${file(../infrastructure/zapehr-config.json):postgresApiPassword}
-  #     auth0Domain:                      ${file(../infrastructure/zapehr-config.json):auth0Domain}
-  #     auth0Connection:                  ${file(../infrastructure/zapehr-config.json):auth0Connection}
-  #     auth0ManagementClientId:          ${file(../infrastructure/zapehr-config.json):auth0ManagementClientId}
-  #     auth0ManagementClientSecret:      ${file(../infrastructure/zapehr-config.json):auth0ManagementClientSecret}
-  #     auth0ManagementAPIAudience:       ${file(../infrastructure/zapehr-config.json):auth0ManagementAPIAudience}
-  #     integrationTest:                  ${strToBool(${param:integrationTest, false})}
-  #     customAuthorizerAudience:         ${file(../infrastructure/zapehr-config.json):customAuthorizerAudience}
-  #     fhirBaseUrl:                      ${file(../infrastructure/zapehr-config.json):fhirBaseUrl}
-  #     reactAppOrigin:                   ${file(../infrastructure/zapehr-config.json):reactAppOrigin}
-  #     environment:                      ${file(../infrastructure/zapehr-config.json):environment}
-  #   events:
-  #     - http:
-  #         path: register
-  #         method: POST
-  #         cors: true
-  #         authorizer: authorizer
-
 plugins:
-  # - serverless-esbuild
+  - serverless-esbuild
   - serverless-offline

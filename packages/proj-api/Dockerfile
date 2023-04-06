@@ -1,9 +1,10 @@
 FROM node:18.0.0
 
-
-RUN npm install
+WORKDIR /proj-api
 
 COPY . .
+
+RUN npm install
 
 EXPOSE 3000
 

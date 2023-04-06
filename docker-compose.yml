@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   postgres:
-    container_name: ticket_master
+    container_name: ticket_master_db
     image: postgres:14
     restart: always
     environment:
@@ -12,3 +12,9 @@ services:
     command: postgres -c config_file=/usr/local/etc/postgres/postgres.conf
     ports:
       - '5432:5432'
+  linux:
+    container_name: api
+    build: ./packages/proj-api
+    ports:
+      - '3034:3034'
+    
