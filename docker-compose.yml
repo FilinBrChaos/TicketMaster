@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  postgres:
+    container_name: ticket_master
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
+    command: postgres -c config_file=/usr/local/etc/postgres/postgres.conf
+    ports:
+      - '5432:5432'
