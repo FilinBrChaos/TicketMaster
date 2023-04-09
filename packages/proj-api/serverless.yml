@@ -37,8 +37,8 @@ functions:
           method: GET
           cors: true
 
-  user-create:
-    handler: src/user/create/index.index
+  client-create:
+    handler: src/client/create/index.index
     timeout: 60
     environment:
       postgresHost:                     ${file(env/api-config.json):postgresHost}
@@ -48,10 +48,24 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: user
+          path: client
           method: POST
           cors: true
     
+  comment-create:
+    handler: src/comment/create/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: comment
+          method: POST
+          cors: true
 
 plugins:
   - serverless-esbuild

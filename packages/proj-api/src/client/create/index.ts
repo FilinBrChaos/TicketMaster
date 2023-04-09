@@ -6,6 +6,7 @@ import { validateParseEvent } from "../../../utils/validations"
 const pool = setupApiPool();
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+  try {
     const body = validateParseEvent(event).body;
 
     let name = body.name ? body.name : 'default';
@@ -16,7 +17,10 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
           [name]
         )
       ).rows[0];
-    
+
     console.log('user created');
     return lambdaResponse(200, { message: "user", id: result.id });
+  } catch (e) {
+    throw { error: "internal error" }
+  }
 }
