@@ -22,21 +22,6 @@ custom:
     exclude: ['pg-native', 'superagent-proxy']
 
 functions:
-  register:
-    handler: src/test/index.index
-    timeout: 60
-    environment:
-      postgresHost:                     ${file(env/api-config.json):postgresHost}
-      postgresPort:                     ${file(env/api-config.json):postgresPort}
-      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
-      postgresUser:                     ${file(env/api-config.json):postgresUser}
-      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
-    events:
-      - http:
-          path: test
-          method: GET
-          cors: true
-
   client-create:
     handler: src/client/create/index.index
     timeout: 60
@@ -64,6 +49,21 @@ functions:
     events:
       - http:
           path: comment
+          method: POST
+          cors: true
+
+  project-create:
+    handler: src/project/create/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: project
           method: POST
           cors: true
 

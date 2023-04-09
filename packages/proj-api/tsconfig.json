@@ -28,5 +28,5 @@
     "lib": ["esnext"]
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*.ts", "utils/*.ts"]
+  "include": ["src/**/*.ts", "utils/*.ts", "lib/validations.ts"]
 }

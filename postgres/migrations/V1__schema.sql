@@ -1,3 +1,13 @@
+
+CREATE FUNCTION "updateUpdatedAtColumn"()
+  RETURNS TRIGGER AS $$
+  BEGIN
+     NEW.updated_at = now(); 
+     RETURN NEW;
+  END;
+  $$ language 'plpgsql';
+
+
 CREATE TABLE "client" (
   id bigserial primary key,
   name VARCHAR
@@ -9,10 +19,19 @@ CREATE TABLE "project" (
   description VARCHAR
 );
 
+CREATE TYPE ticket_state AS ENUM ('Backlog', 'In process', 'Ready for test', 'Ready for build', 'Completed');
+
+CREATE TRIGGER updateTicketUpdatedAt BEFORE UPDATE
+  ON "ticket" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 CREATE TABLE "ticket" (
   id bigserial PRIMARY KEY,
   name VARCHAR,
   description VARCHAR,
+  state ticket_state,
+  created_at timestamp with time zone NOT NULL default current_timestamp,
+  updated_at timestamp with time zone NOT NULL default current_timestamp,
   assigned_client_id bigserial,
   project_id bigserial,
   topic_id bigserial,
@@ -46,11 +65,17 @@ CREATE TABLE "ticket_label" (
   ON DELETE CASCADE
 );
 
+CREATE TRIGGER updateCommentUpdatedAt BEFORE UPDATE
+  ON "comment" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 --  create trigger on client name update
 CREATE TABLE "comment" (
   id bigserial PRIMARY KEY,
   comment VARCHAR,
   client_name VARCHAR,
+  created_at timestamp with time zone NOT NULL default current_timestamp,
+  updated_at timestamp with time zone NOT NULL default current_timestamp,
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
@@ -72,10 +97,19 @@ CREATE TABLE "ticket_comment" (
   ON DELETE CASCADE
 );
 
+CREATE TYPE retro_state AS ENUM ('noting', 'grouping', 'voting', 'discussions');
+
+CREATE TRIGGER updateRetroUpdatedAt BEFORE UPDATE
+  ON "retro" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 CREATE TABLE "retro" (
   id bigserial PRIMARY KEY,
   name varchar,
   description varchar,
+  created_at timestamp with time zone NOT NULL default current_timestamp,
+  updated_at timestamp with time zone NOT NULL default current_timestamp,
+  state retro_state,
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
@@ -83,10 +117,16 @@ CREATE TABLE "retro" (
   ON DELETE CASCADE
 );
 
+CREATE TRIGGER updateTopicUpdatedAt BEFORE UPDATE
+  ON "topic" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 CREATE TABLE "topic" (
   id bigserial PRIMARY KEY,
   name varchar,
   description varchar,
+  created_at timestamp with time zone NOT NULL default current_timestamp,
+  updated_at timestamp with time zone NOT NULL default current_timestamp,
   retro_id bigserial,
   CONSTRAINT fk_retro_id 
   FOREIGN KEY (retro_id) 
@@ -94,10 +134,16 @@ CREATE TABLE "topic" (
   ON DELETE CASCADE
 );
 
+CREATE TRIGGER updateNoteUpdatedAt BEFORE UPDATE
+  ON "note" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 CREATE TABLE "note" (
   id bigserial PRIMARY KEY,
   title varchar,
   description varchar,
+  created_at timestamp with time zone NOT NULL default current_timestamp,
+  updated_at timestamp with time zone NOT NULL default current_timestamp,
   topic_id bigserial,
   retro_id bigserial,
   CONSTRAINT fk_retro_id 

@@ -1,25 +1,20 @@
 import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
-import { lambdaResponse } from "../../../utils/lambda";
-import { setupApiPool } from "../../../utils/database";
-import { validateParseEvent } from "../../../utils/validations"
+import { lambdaResponse } from "../../../lib/lambda";
+import { setupApiPool } from "../../../lib/database";
+import { parseEvent } from "../../../lib/validations"
+import { createRecord } from "../../../services/dbservice"
+import { Client } from '../../../lib/types';
 
 const pool = setupApiPool();
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const body = validateParseEvent(event).body;
-
+    const body = parseEvent(event).body;
     let name = body.name ? body.name : 'default';
 
-    const result = (
-        await pool.query(
-          `INSERT INTO "client" (name) VALUES ($1) RETURNING id`,
-          [name]
-        )
-      ).rows[0];
+    const result = await createRecord(pool, 'client', { name: name } as Client)
 
-    console.log('user created');
-    return lambdaResponse(200, { message: "user", id: result.id });
+    return lambdaResponse(200, { id: result.rows[0].id });
   } catch (e) {
     throw { error: "internal error" }
   }
