@@ -15,6 +15,6 @@ npm --version
 
 # Start
 pushd "packages/proj-api"
-#npm run build
+npm run build
 npm run start
 popd

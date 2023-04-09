@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
-import { lambdaResponse } from '../utils/lambda';
+import { lambdaResponse } from '../../utils/lambda';
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
     console.log('something');
