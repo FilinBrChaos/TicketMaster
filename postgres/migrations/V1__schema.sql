@@ -21,10 +21,6 @@ CREATE TABLE "project" (
 
 CREATE TYPE ticket_state AS ENUM ('Backlog', 'In process', 'Ready for test', 'Ready for build', 'Completed');
 
-CREATE TRIGGER updateTicketUpdatedAt BEFORE UPDATE
-  ON "ticket" FOR EACH ROW EXECUTE PROCEDURE 
-  "updateUpdatedAtColumn"();
-
 CREATE TABLE "ticket" (
   id bigserial PRIMARY KEY,
   name VARCHAR,
@@ -40,6 +36,10 @@ CREATE TABLE "ticket" (
   REFERENCES project (id)
   ON DELETE CASCADE
 );
+
+CREATE TRIGGER updateTicketUpdatedAt BEFORE UPDATE
+  ON "ticket" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
 
 CREATE TABLE "label" (
   id bigserial PRIMARY KEY,
@@ -65,10 +65,6 @@ CREATE TABLE "ticket_label" (
   ON DELETE CASCADE
 );
 
-CREATE TRIGGER updateCommentUpdatedAt BEFORE UPDATE
-  ON "comment" FOR EACH ROW EXECUTE PROCEDURE 
-  "updateUpdatedAtColumn"();
-
 --  create trigger on client name update
 CREATE TABLE "comment" (
   id bigserial PRIMARY KEY,
@@ -82,6 +78,10 @@ CREATE TABLE "comment" (
   REFERENCES project (id)
   ON DELETE CASCADE
 );
+CREATE TRIGGER updateCommentUpdatedAt BEFORE UPDATE
+  ON "comment" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
+
 
 CREATE TABLE "ticket_comment" (
   id bigserial PRIMARY KEY,
@@ -99,10 +99,6 @@ CREATE TABLE "ticket_comment" (
 
 CREATE TYPE retro_state AS ENUM ('noting', 'grouping', 'voting', 'discussions');
 
-CREATE TRIGGER updateRetroUpdatedAt BEFORE UPDATE
-  ON "retro" FOR EACH ROW EXECUTE PROCEDURE 
-  "updateUpdatedAtColumn"();
-
 CREATE TABLE "retro" (
   id bigserial PRIMARY KEY,
   name varchar,
@@ -117,8 +113,8 @@ CREATE TABLE "retro" (
   ON DELETE CASCADE
 );
 
-CREATE TRIGGER updateTopicUpdatedAt BEFORE UPDATE
-  ON "topic" FOR EACH ROW EXECUTE PROCEDURE 
+CREATE TRIGGER updateRetroUpdatedAt BEFORE UPDATE
+  ON "retro" FOR EACH ROW EXECUTE PROCEDURE 
   "updateUpdatedAtColumn"();
 
 CREATE TABLE "topic" (
@@ -134,8 +130,8 @@ CREATE TABLE "topic" (
   ON DELETE CASCADE
 );
 
-CREATE TRIGGER updateNoteUpdatedAt BEFORE UPDATE
-  ON "note" FOR EACH ROW EXECUTE PROCEDURE 
+CREATE TRIGGER updateTopicUpdatedAt BEFORE UPDATE
+  ON "topic" FOR EACH ROW EXECUTE PROCEDURE 
   "updateUpdatedAtColumn"();
 
 CREATE TABLE "note" (
@@ -151,6 +147,10 @@ CREATE TABLE "note" (
   REFERENCES retro (id)
   ON DELETE CASCADE
 );
+
+CREATE TRIGGER updateNoteUpdatedAt BEFORE UPDATE
+  ON "note" FOR EACH ROW EXECUTE PROCEDURE 
+  "updateUpdatedAtColumn"();
 
 create TABLE "topic_rating" (
   id bigserial PRIMARY KEY,
