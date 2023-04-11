@@ -16,6 +16,6 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
 
     return lambdaResponse(200, { id: result.rows[0].id });
   } catch (e) {
-    throw { error: "internal error" }
+    return lambdaResponse(500, { error: JSON.stringify(e) });
   }
 }
