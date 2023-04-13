@@ -1,4 +1,4 @@
-export default function RootError(): JSX.Element {
+export function RootError(): JSX.Element {
     return (
         <div>
 
