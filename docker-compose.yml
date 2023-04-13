@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  postgres:
+  db:
     container_name: ticket_master_db
     image: postgres:14
     restart: always
@@ -10,6 +10,8 @@ services:
     volumes:
       - ./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf
     command: postgres -c config_file=/usr/local/etc/postgres/postgres.conf
+    expose:
+      - '5432'
     ports:
       - '5432:5432'
   ticket-master-api:
@@ -17,4 +19,7 @@ services:
     build: ./packages/proj-api
     ports:
       - '3034:3034'
+    depends_on:
+      - 'db'
+      
     
