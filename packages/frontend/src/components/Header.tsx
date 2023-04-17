@@ -10,9 +10,9 @@ export function Header(props: HeaderProps): JSX.Element {
         <div className="flex flex-row items-center justify-between w-screen h-28 px-20">
             <Typography variant="h4">{props.title}</Typography>
             <Button>
-                <div className="flex flex-row items-center bg-white">
+                <div className="flex flex-row items-center">
                     <Typography sx={{ pr: 3 }}>{props.user}</Typography>
-                    <div className=" w-9 h-9 bg-black rounded-full"></div>
+                    <div className=" w-9 h-9 bg-slate-400 rounded-full"></div>
                 </div>
             </Button>
         </div>

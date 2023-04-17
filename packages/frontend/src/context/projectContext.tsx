@@ -1,24 +1,53 @@
-import { createContext, useContext } from "react";
-import { apiClient } from '../lib/apiClient';
+import { FC, createContext, useCallback, useContext, useMemo, useState } from "react";
+import Register from "../pages/register";
 
-export interface ProjectContext {
-    apiClient: apiClient;
-    userId: number | undefined;
-    userIsAuthenticated: boolean;
-    signIn: (loc?: string) => Promise<void>;
-    signOut: () => Promise<void>;
+interface APIClient {
+    getUser: () => Promise<void>;
 }
 
-const projectContext = createContext<ProjectContext>({
-    apiClient: new apiClient(),
-    userId: undefined,
-    userIsAuthenticated: false,
-    signIn: async () => {
-        throw 'Not implemented';
+export interface ProjectContextProps {
+    apiClient: APIClient;
+    userId: number | undefined;
+    userIsAuthenticated: boolean;
+}
+
+const ProjectContext = createContext<ProjectContextProps>({
+    apiClient: {
+        getUser: () => {
+            throw 'not implemented'
+        }
     },
-    signOut: async () => {
-        throw 'Not implemented';
-    }
+    userId: undefined,
+    userIsAuthenticated: false
 });
 
-export const useProjectContext = () => useContext(projectContext);
+interface ProjectContextProviderProps {
+    children: any;
+}
+
+export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ children }) => {
+    const [ userId, setUserId ] = useState<number | undefined>();
+    const [ userIsAuthenticated, setUserIsAuthenticated ] = useState(false);
+
+
+    const apiClient: APIClient = useMemo(() => {
+        const getUser =async (): Promise<void> => {
+            console.log('not implemented');
+        }
+        return{
+            getUser
+        }
+    }, []);
+
+    const projectContext: ProjectContextProps = {
+        apiClient,
+        userId,
+        userIsAuthenticated,
+
+    };
+
+    return <ProjectContext.Provider value={projectContext}>{children}</ProjectContext.Provider>;
+
+};  
+
+export const useProjectContext = () => useContext(ProjectContext);
