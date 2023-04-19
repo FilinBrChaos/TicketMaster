@@ -1,5 +1,5 @@
 {
-    "postgresHost": "ticket_master_db",
+    "postgresHost": "localhost",
     "postgresPort": "5432",
     "postgresDatabase": "admin",
     "postgresUser": "admin",

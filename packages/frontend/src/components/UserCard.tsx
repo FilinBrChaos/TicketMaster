@@ -1,13 +1,23 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
-import { palette } from '../context/ProjectThemeProvider';
+import { DeleteOutline } from '@mui/icons-material';
+import { Button, Typography, Box, IconButton } from '@mui/material';
 
-export function UserCard(): JSX.Element {
+interface UserCardProps {
+    name: string;
+    color: string;
+    onUserClickHandler?: () => void;
+    onDeleteUserHandler?: () => void;
+}
+
+export function UserCard(props: UserCardProps): JSX.Element {
     return (
-        <Button sx={{ mb: 1 }}>
-            <div onClick={() => { console.log("some") }} className=" flex flex-row w-64 h-12 items-center justify-between">
-                <Typography>User name</Typography>
-                <div className="w-7 h-7 rounded-lg bg-black"></div>
-            </div>
-        </Button>
+        <div className='flex flex-row items-center'>
+            <Button onClick={props.onUserClickHandler} sx={{ mb: 1 }}>
+                <div className=" flex flex-row w-64 h-12 items-center justify-between">
+                    <Typography>{props.name}</Typography>
+                        <Box sx={{ width: 35, height: 35, borderRadius: 100, backgroundColor: props.color }}></Box>
+                </div>
+            </Button>
+            <IconButton sx={{ width: 40, height: 40 }} onClick={props.onDeleteUserHandler}><DeleteOutline /></IconButton>
+        </div>
     )
 }

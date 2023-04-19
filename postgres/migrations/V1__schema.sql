@@ -8,8 +8,9 @@ CREATE FUNCTION "updateUpdatedAtColumn"()
   $$ language 'plpgsql';
 
 
-CREATE TABLE "client" (
+CREATE TABLE "user" (
   id bigserial primary key,
+  color VARCHAR,
   name VARCHAR
 );
 
@@ -28,7 +29,7 @@ CREATE TABLE "ticket" (
   state ticket_state,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
-  assigned_client_id bigserial,
+  assigned_user_id bigserial,
   project_id bigserial,
   topic_id bigserial,
   CONSTRAINT fk_project_id
@@ -65,11 +66,11 @@ CREATE TABLE "ticket_label" (
   ON DELETE CASCADE
 );
 
---  create trigger on client name update
+--  create trigger on user name update
 CREATE TABLE "comment" (
   id bigserial PRIMARY KEY,
   comment VARCHAR,
-  client_name VARCHAR,
+  user_name VARCHAR,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
   project_id bigserial,

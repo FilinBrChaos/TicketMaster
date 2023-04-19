@@ -6,7 +6,8 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto": "^4.5.8",
-    "@mui/material": "^5.12.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.1",
     "@mui/styled-engine-sc": "^5.12.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -25,9 +26,9 @@
   },
   "scripts": {
     "eject": "react-scripts eject",
-    "start": "react-scripts start",
+    "start": "react-scripts start --env environment=local",
     "build": "react-scripts build",
-    "test": "react-scripts test"  
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [

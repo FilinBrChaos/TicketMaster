@@ -1,18 +1,18 @@
-import { Box, Button } from "@mui/material";
-import { UserCard } from "../../components/UserCard";
+import { Suspense } from 'react';
+import { Await, useLoaderData } from "react-router-dom";
+import RegisterPage from "../../components/RegisterPage";
+import { User } from "../../../lib/types";
 
 export default function Register(): JSX.Element {
+    const usersPromise = useLoaderData() as { users: User[] };
+
     return (
-        <div className={"w-screen h-screen flex flex-col items-center justify-center"}> 
-            <div className=" flex flex-col">
-                <UserCard></UserCard>
-                <UserCard></UserCard>
-                <UserCard></UserCard>
-                <UserCard></UserCard>
-            </div>
-            <div>
-                <Button sx={{ mt: 2 }}>Add</Button>
-            </div>
-        </div>
-    );
+        <Suspense fallback={<RegisterPage users={[]} loading></RegisterPage>}>
+            <Await resolve={usersPromise.users}>
+                {(users) => {
+                    return <RegisterPage users={users} loading={false} />
+                }}
+            </Await>
+        </Suspense>
+    )
 }

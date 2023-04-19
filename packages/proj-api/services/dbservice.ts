@@ -22,3 +22,8 @@ export const createRecord = async (pool: Pool, table: string, input: ProjectType
 
     return insertIn(pool, table, Object.keys(input), Object.values(input));
 }
+
+export const getAllRecords = async (pool: Pool, table: string) => {
+    const dbOut = await pool.query(`SELECT * FROM "${table}"`);
+    return dbOut;
+}

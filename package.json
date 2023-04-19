@@ -16,7 +16,6 @@
   "devDependencies": {
     "serverless": "^3.30.0",
     "@aws-sdk/client-lambda": "3.218.0",
-    "@types/auth0": "^2.35.3",
     "@types/aws-lambda": "^8.10.102",
     "@types/cfn-response-promise": "^1.1.0",
     "@types/express-unless": "0.5.3",

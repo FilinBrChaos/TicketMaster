@@ -15,4 +15,9 @@ For start whole project run (in root folder!!):
 
 ### Developer notes
 
-To run api without container run `sh scripts/start-serverless.sh` and change `packages/proj-api/env/api-config.json/postgresHost` to `localhost` and disable running api container in docker. In case you want to start api with default workflow change `packages/proj-api/env/api-config.json/postgresHost` to `ticket_master_db`.
+To run api without container:
+1. disable running api container in docker
+2. change `packages/proj-api/env/api-config.json/postgresHost` to `localhost`
+3. run `sh scripts/start-serverless.sh`
+
+In case you want to start api with default workflow change `packages/proj-api/env/api-config.json/postgresHost` to `ticket_master_db`.

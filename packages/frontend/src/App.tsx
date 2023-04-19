@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, defer, RouterProvider } from 'react-router-dom';
 import Projects from './pages/projects';
 import './App.css'
 import Project from './pages/projects/project';
@@ -9,8 +9,15 @@ import { USER_NOT_LOGGED_IN } from './lib/errors';
 import Register from './pages/register';
 
 function App() {
-  const { userIsAuthenticated } = useProjectContext();
+  const { userIsAuthenticated, apiClient } = useProjectContext();
   const router = createBrowserRouter([
+    {
+      path: '/register',
+      element: <Register />,
+      loader: () => {
+        return defer({ users: apiClient.getUsers() });
+      }
+    },
     {
       path: '/*',
       element: <Projects />,
@@ -22,10 +29,6 @@ function App() {
         return null;
       },
       children: [
-        {
-          path: 'register',
-          element: <Register />
-        },
         {
           path: 'project',
           element: <Project />
