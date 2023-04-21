@@ -33,7 +33,7 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: user
+          path: users
           method: POST
           cors: true
 
@@ -52,9 +52,8 @@ functions:
           method: GET
           cors: true
 
-    
-  comment-create:
-    handler: src/comment/create/index.index
+  user-get: 
+    handler: src/user/get/index.index
     timeout: 60
     environment:
       postgresHost:                     ${file(env/api-config.json):postgresHost}
@@ -64,8 +63,23 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: comment
-          method: POST
+          path: users/{userId}
+          method: GET
+          cors: true
+
+  user-delete:
+    handler: src/user/delete/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: users/{userId}
+          method: DELETE
           cors: true
 
   project-create:
@@ -79,7 +93,52 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: project
+          path: projects
+          method: POST
+          cors: true
+
+  project-get:
+    handler: src/project/get/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: projects/{projId}
+          method: GET
+          cors: true
+
+  project-get-all:
+    handler: src/project/get-all/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: projects
+          method: GET
+          cors: true
+
+  comment-create:
+    handler: src/comment/create/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: comment
           method: POST
           cors: true
 

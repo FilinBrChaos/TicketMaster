@@ -21,15 +21,15 @@ export const palette = {
     },
     primary: {
       main: '#d1d0c5',
-      dark: '#101214',
-      light: '#4AC0F2',
-      contrast: '#FFFFFF',
+      dark: '#d1d0c5',
+      light: '#d1d0c5',
+      contrast: '#d1d0c5',
     },
     secondary: {
-      main: '#266AD1',
-      dark: '#1B54AC',
-      light: '#3D89FD',
-      contrast: '#FFFFFF',
+      main: '#d1d0c5',
+      dark: '#d1d0c5',
+      light: '#d1d0c5',
+      contrast: '#d1d0c5',
     },
     info: {
       main: '#0288D1',

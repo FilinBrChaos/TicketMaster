@@ -2,14 +2,22 @@ export interface ProjectType {
 
 }
 
-export interface User extends ProjectType {
+export interface User extends UserBody {
+    id: number;
+}
+
+export interface UserBody extends ProjectType {
     name: string;
     color: string;
 }
 
-export interface Project extends ProjectType {
+export interface Project extends ProjectBody {
+    id: number;
+}
+
+export interface ProjectBody extends ProjectType {
     name: string;
-    description: string;
+    description?: string;
 }
 
 export interface Label {

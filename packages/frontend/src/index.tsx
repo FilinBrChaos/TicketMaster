@@ -10,11 +10,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ProjectThemeProvider>
-      <ProjectContextProvider>
+    <ProjectContextProvider>
+      <ProjectThemeProvider>
         <App />
-      </ProjectContextProvider>
-    </ProjectThemeProvider>
+      </ProjectThemeProvider>
+    </ProjectContextProvider>
   </React.StrictMode>
 );
 
