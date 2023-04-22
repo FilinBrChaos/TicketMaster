@@ -2,28 +2,40 @@ export interface ProjectType {
 
 }
 
-export interface User extends ProjectType {
-    id?: number;
-    name: string;
-    color: string;
+export interface User extends UserBody {
+    id: number;
 }
 
-export interface Project extends ProjectType {
-    id?: number;
+export interface UserBody extends ProjectType {
     name: string;
-    description: string;
+    color?: string;
 }
 
-export interface Label {
-    id?: number;
+export interface Project extends ProjectBody {
+    id: number;
+}
+
+export interface ProjectBody extends ProjectType {
+    name: string;
+    description?: string;
+}
+
+export interface Label extends LabelBody {
+    id: number;
+}
+
+export interface LabelBody extends ProjectType {
     name: string;
     project_id: number;
 }
 
-export interface Ticket {
-    id?: number;
+export interface Ticket extends TicketBody {
+    id: number;
+}
+
+export interface TicketBody extends ProjectType {
     name: string;
-    description: string;
+    description?: string;
     assigned_user_id?: number;
     project_id: number;
     topic_id?: number;

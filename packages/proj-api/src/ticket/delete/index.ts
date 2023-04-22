@@ -7,9 +7,9 @@ const pool = setupApiPool();
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const userId = parseRequestString(event);
+    const ticketId = parseRequestString(event);
 
-    const dbOut = await deleteWithId(pool, 'user', userId);
+    const dbOut = await deleteWithId(pool, 'ticket', ticketId);
 
     return lambdaResponse(200, { id: dbOut.rows[0] });
   } catch (e) {
@@ -18,11 +18,11 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
 }
 
 const parseRequestString = (event: APIGatewayProxyEvent) => {
-  const { pathParameters } = event;
-  if (!pathParameters) throw Error('Search parameters must be specified');
-  const { userId } = pathParameters;
-  if (!userId) throw Error('User id must be specified in url path params as /user/{userId}');
-  const id = Number(userId);
-  if (!id) throw Error("User id must be a number");
-  return id;
+    const { pathParameters } = event;
+    if (!pathParameters) throw Error('Search parameters must be specified');
+    const { ticketId } = pathParameters;
+    if (!ticketId) throw Error('Ticket id must be specified in url path params as /tickets/{ticketId}');
+    const id = Number(ticketId);
+    if (!id) throw Error("Ticket id must be a number");
+    return id;
 };

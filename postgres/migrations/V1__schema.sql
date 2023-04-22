@@ -10,21 +10,21 @@ CREATE FUNCTION "updateUpdatedAtColumn"()
 
 CREATE TABLE "user" (
   id bigserial primary key,
-  color VARCHAR,
-  name VARCHAR
+  name VARCHAR NOT NULL,
+  color VARCHAR
 );
 
 CREATE TABLE "project" (
   id bigserial PRIMARY KEY,
-  name VARCHAR,
+  name VARCHAR NOT NULL,
   description VARCHAR
 );
 
-CREATE TYPE ticket_state AS ENUM ('Backlog', 'In process', 'Ready for test', 'Ready for build', 'Completed');
+CREATE TYPE ticket_state AS ENUM ('Open', 'Closed');
 
 CREATE TABLE "ticket" (
   id bigserial PRIMARY KEY,
-  name VARCHAR,
+  name VARCHAR NOT NULL,
   description VARCHAR,
   state ticket_state,
   created_at timestamp with time zone NOT NULL default current_timestamp,
@@ -44,7 +44,7 @@ CREATE TRIGGER updateTicketUpdatedAt BEFORE UPDATE
 
 CREATE TABLE "label" (
   id bigserial PRIMARY KEY,
-  name VARCHAR,
+  name VARCHAR NOT NULL,
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
@@ -69,8 +69,8 @@ CREATE TABLE "ticket_label" (
 --  create trigger on user name update
 CREATE TABLE "comment" (
   id bigserial PRIMARY KEY,
-  comment VARCHAR,
-  user_name VARCHAR,
+  comment VARCHAR NOT NULL,
+  user_name VARCHAR NOT NULL,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
   project_id bigserial,

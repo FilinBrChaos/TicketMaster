@@ -1,27 +1,37 @@
-import { Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
 import { palette } from '../context/ProjectThemeProvider';
-import { Add } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
+import { useState } from "react";
 
 interface ProjectCardProps {
     title?: string;
-    onClick?: () => void; 
-    createCard?: boolean;
+    onClick?: () => void;
+    onDeleteClick?: () => void;
 }
 
 export function ProjectCard(props: ProjectCardProps): JSX.Element {
-    let title = props.title ? props.title : 'Project';
+    const [ openDeleteProjectDialog, setOpenDeleteProjectDialog ] = useState(false);
 
-    if (props.createCard) {
-        return (
-            <div className="flex justify-center items-center p-3 w-[90%] h-52 bg-opacity-30 bg-slate-500 rounded-lg cursor-pointer" onClick={props.onClick}>
-                <Add fontSize="large" sx={{ width: 60, height: 60 }} />
-            </div>
-        )
-    }
+    let title = props.title ? props.title : 'Project';
 
     return (
         <div className="flex flex-col-reverse p-3 w-[90%] h-52 rounded-lg bg-slate-200 cursor-pointer" onClick={props.onClick}>
-            <Typography sx={{ color: palette.background.default, fontSize: 28 }}>{title}</Typography>
+            <div className="flex flex-row items-center justify-between">
+                <Typography sx={{ color: palette.background.default, fontSize: 28 }}>{title}</Typography>
+                <IconButton sx={{ width: 30, height: 30 }} onClick={() => { setOpenDeleteProjectDialog(true) }}><Delete /></IconButton>
+            </div>
+
+            <Dialog open={openDeleteProjectDialog}>
+                <DialogTitle>Conformation</DialogTitle>
+                <DialogContent>Once you delete project this action can't be undone</DialogContent>
+                <DialogActions>
+                    <Button variant='contained' color='error' onClick={() => { 
+                        setOpenDeleteProjectDialog(false);
+                        if (props.onDeleteClick) props.onDeleteClick()
+                    }}>Delete</Button>
+                    <Button onClick={() => { setOpenDeleteProjectDialog(false) }}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }

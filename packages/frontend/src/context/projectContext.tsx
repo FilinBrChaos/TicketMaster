@@ -1,4 +1,4 @@
-import { FC, createContext, useCallback, useContext, useMemo, useState } from "react";
+import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import { Project, User, UserBody, ProjectBody } from '../../lib/types';
 
 
@@ -10,12 +10,12 @@ interface APIClient {
     getProjects: () => Promise<Project[]>;
     getProject: (projectId: number) => Promise<Project>;
     createProject: (project: ProjectBody) => Promise<number>;
+    deleteProject: (projectId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
     apiClient: APIClient;
     userId: number | undefined;
-    userIsAuthenticated: boolean;
     signIn: (userId: number) => void;
 }
 
@@ -41,12 +41,14 @@ const ProjectContext = createContext<ProjectContextProps>({
         },
         createProject: async () => {
             throw Error('not implemented')
+        },
+        deleteProject: async () => {
+            throw Error('not implemented')
         }
     },
     userId: undefined,
-    userIsAuthenticated: false,
     signIn: () => {
-
+        throw Error('not implemented')
     }
 });
 
@@ -57,9 +59,16 @@ interface ProjectContextProviderProps {
 const apiBasePath = "http://0.0.0.0:3034/dev";
 
 export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ children }) => {
-    const [ userId, setUserId ] = useState<number | undefined>();
-    const [ userIsAuthenticated, setUserIsAuthenticated ] = useState(false);
+    const [ userId, setUserId ] = useState<number | undefined>(getIdFromLocalStorage('userId'));
+    const [ projectId, setProjectId ] = useState<number | undefined>(getIdFromLocalStorage('projectId'));
 
+    useEffect(() => {
+        if (userId) saveToLocalStorage('userId', JSON.stringify(userId));
+    }, [userId]);
+
+    useEffect(() => {
+        if (projectId) saveToLocalStorage('projectId', JSON.stringify(projectId));
+    }, [projectId]);
 
     const apiClient: APIClient = useMemo(() => {
         const getRequest = async (path: string): Promise<Response> => {
@@ -109,7 +118,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             const response = await deleteRequest(`/users/${userId}`);
             const json = await response.json();
             if (response.ok) {
-                return json.user;
+                return json.id;
             } else {
                 throw json;
             }
@@ -147,6 +156,16 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const deleteProject = async (projectId: number): Promise<number> => {
+            const response = await deleteRequest(`/projects/${projectId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
         return{
             getUsers,
             getUser,
@@ -154,26 +173,32 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             deleteUser,
             getProjects,
             getProject,
-            createProject
+            createProject,
+            deleteProject
         }
     }, []);
 
     const signIn = useCallback((userId: number) => {
         setUserId(userId);
-        setUserIsAuthenticated(true);
-        console.log('some' + userId);
-
     }, []);
 
     const projectContext: ProjectContextProps = {
         apiClient,
         userId,
-        userIsAuthenticated,
         signIn
     };
 
     return <ProjectContext.Provider value={projectContext}>{children}</ProjectContext.Provider>;
 
-};  
+};
+
+const saveToLocalStorage = (itemName: string, itemObj: string) => {
+    localStorage.setItem(itemName, itemObj);
+}
+
+const getIdFromLocalStorage = (keyName: string): number | undefined => {
+    const id = localStorage.getItem(keyName);
+    return id && typeof id != 'undefined' ? JSON.parse(id) : undefined;
+}
 
 export const useProjectContext = () => useContext(ProjectContext);

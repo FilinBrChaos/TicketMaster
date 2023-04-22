@@ -13,10 +13,10 @@ export function Header(props: HeaderProps): JSX.Element {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (context.userIsAuthenticated && context.userId) {
+        if (context.userId) {
             context.apiClient.getUser(context.userId).then((user) => { setUser({ name: user.name, color: user.color }) });
         }
-    }, [context.userIsAuthenticated, context.userId, context.apiClient]);
+    }, [context.userId, context.apiClient]);
 
     const userOnClickHandler = () => {
         navigate('/register');

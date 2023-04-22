@@ -1,11 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useProjectContext } from '../context/ProjectContext';
 import { Header } from './Header';
 import { ProjectCard } from './ProjectCard';
-import { Project } from '../../lib/types';
+import { Project, ProjectBody } from '../../lib/types';
 import { LoadingPage } from './LoadingPage';
 import { v4 } from 'uuid';
+import { CreateProjectCard } from './CreateProjectCard';
 
 interface ProjectsPageProps {
     projects: Project[];
@@ -13,13 +13,23 @@ interface ProjectsPageProps {
 }
 
 export default function ProjectsPage(props: ProjectsPageProps): JSX.Element {
-    const context = useProjectContext();
-    const [ openCreateProjectDialog, setOpenCreateProjectDialog ] = useState(false);
+    const [ projectsList, setProjectList ] = useState(props.projects ? props.projects : []);
+    const { apiClient: client } = useProjectContext();
 
-    console.log('logged ' + context.userIsAuthenticated + " user id " + context.userId);
+    const createProjectButtonHandler = (projName: string, projDescription: string) => {
+        client.createProject({ name: projName, description: projDescription } as ProjectBody).then(() => {
+            client.getProjects().then((res) => {
+                setProjectList(res);
+            })
+        })
+    }
 
-    const createProjectButtonHandler = () => {
-        
+    const deleteProjectHandler = (projectId: number) => {
+        client.deleteProject(projectId).then(() => {
+            client.getProjects().then((res) => {
+                setProjectList(res)
+            })
+        })
     }
 
     if (props.loading) return <LoadingPage />
@@ -28,22 +38,16 @@ export default function ProjectsPage(props: ProjectsPageProps): JSX.Element {
             <Header title="Ticket master"></Header>
             <div className="w-9/12 h-5/6 mt-10">
                 <div className=" w-full grid grid-cols-3 gap-y-8 justify-items-center">
-                    {props.projects.length > 0 ? props.projects.map((project) => <ProjectCard title={project.name} key={v4()}></ProjectCard>) : null}
-                    <ProjectCard createCard onClick={() => { setOpenCreateProjectDialog(true) }} ></ProjectCard>
+                    {projectsList.length > 0 ? 
+                    projectsList.map((project) => 
+                        <ProjectCard 
+                            title={project.name} 
+                            onDeleteClick={() => { deleteProjectHandler(project.id) }} 
+                            key={v4()}></ProjectCard>) :
+                        null}
+                    <CreateProjectCard onDialogCreateClick={createProjectButtonHandler} />
                 </div>
-
             </div>
-            <Dialog open={openCreateProjectDialog} maxWidth='sm' fullWidth>
-                <DialogTitle>Create project</DialogTitle>
-                <DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <TextField label='Name' sx={{ mt: 2 }} />
-                    <TextField label='Description' sx={{ mt: 2 }} multiline minRows={2} />
-                </DialogContent>
-                <DialogActions>
-                    <Button>Create</Button>
-                    <Button onClick={() => { setOpenCreateProjectDialog(false) }}>Cancel</Button>
-                </DialogActions>
-            </Dialog>
         </div>
     );
 }
