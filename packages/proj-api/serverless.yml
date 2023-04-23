@@ -170,7 +170,7 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: tickets/{projId}
+          path: ticket/{ticketId}
           method: GET
           cors: true
 

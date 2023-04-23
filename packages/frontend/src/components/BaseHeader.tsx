@@ -7,7 +7,7 @@ interface HeaderProps {
     title: string;
 }
 
-export function Header(props: HeaderProps): JSX.Element {
+export function BaseHeader(props: HeaderProps): JSX.Element {
     const context = useProjectContext();
     const [ user, setUser ] = useState({ name: 'log in', color: 'white' });
     const navigate = useNavigate();

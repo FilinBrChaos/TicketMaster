@@ -26,7 +26,7 @@ export const palette = {
       contrast: '#d1d0c5',
     },
     secondary: {
-      main: '#d1d0c5',
+      main: '#2c2e31',
       dark: '#d1d0c5',
       light: '#d1d0c5',
       contrast: '#d1d0c5',

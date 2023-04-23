@@ -1,4 +1,4 @@
-import { createBrowserRouter, defer, LoaderFunctionArgs, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, defer, LoaderFunctionArgs, Navigate, RouterProvider } from 'react-router-dom';
 import Projects from './pages/projects';
 import './App.css'
 import { RootError } from './components/RootError';
@@ -11,13 +11,11 @@ function App() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Projects />,
+      element: <Navigate to="/projects"></Navigate>,
       errorElement: <RootError />,
       // loader: () => {
-      //   if (!userIsAuthenticated) {
-      //     throw new Error(USER_NOT_LOGGED_IN);
-      //   }
-      //   return null;
+      //   return defer({ projects: apiClient.getProjects() });
+      // }
     },
     {
       path: 'register',
@@ -38,6 +36,7 @@ function App() {
           element: <Project />,
           loader: (args: LoaderFunctionArgs) => {
             const id = args.params.id;
+
             return defer({ project: apiClient.getProject(id ? Number(id) : 0) });
           }
         }

@@ -8,9 +8,9 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
   try {
     const params = event.queryStringParameters;
     console.log('query params ' + JSON.stringify(params));
-    const projectId = parseRequestString(event);
+    const ticketId = parseRequestString(event);
 
-    const dbOut = await pool.query(`SELECT * FROM "ticket" where id=${projectId}`);
+    const dbOut = await pool.query(`SELECT * FROM "ticket" where id=${ticketId}`);
 
     return lambdaResponse(200, { project: dbOut.rows[0] });
   } catch (e) {
@@ -21,9 +21,9 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
 const parseRequestString = (event: APIGatewayProxyEvent) => {
   const { pathParameters } = event;
   if (!pathParameters) throw Error('Search parameters must be specified');
-  const { projId } = pathParameters;
-  if (!projId) throw Error('Project id must be specified in url path params as /projects/{projId}');
-  const id = Number(projId);
-  if (!id) throw Error("Project id must be a number");
+  const { ticketId } = pathParameters;
+  if (!ticketId) throw Error('Ticket id must be specified in url path params as /tickets/{ticketId}');
+  const id = Number(ticketId);
+  if (!id) throw Error("Ticket id must be a number");
   return id;
 };

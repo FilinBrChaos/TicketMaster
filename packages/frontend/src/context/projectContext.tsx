@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { Project, User, UserBody, ProjectBody } from '../../lib/types';
+import { Project, User, UserBody, ProjectBody, Ticket, TicketBody } from '../../lib/types';
 
 
 interface APIClient {
@@ -7,16 +7,24 @@ interface APIClient {
     getUser: (userId: number) => Promise<User>;
     createUser: (user: UserBody) => Promise<number>;
     deleteUser: (userId: number) => Promise<number>;
+
     getProjects: () => Promise<Project[]>;
     getProject: (projectId: number) => Promise<Project>;
     createProject: (project: ProjectBody) => Promise<number>;
     deleteProject: (projectId: number) => Promise<number>;
+    
+    getTickets: (projectId: number) => Promise<Ticket[]>;
+    getTicket: (ticketId: number, queryParams: any) => Promise<Ticket>;
+    createTicket: (ticket: TicketBody) => Promise<number>;
+    deleteTicket: (ticketId: number) => Promise<number>;
+    updateTicket: (ticketId: number, ticket: TicketBody) => Promise<number>;
 }
 
 export interface ProjectContextProps {
     apiClient: APIClient;
-    userId: number | undefined;
+    userId: number | null;
     signIn: (userId: number) => void;
+    setProject: (projectId: number) => void;
 }
 
 const ProjectContext = createContext<ProjectContextProps>({
@@ -44,10 +52,28 @@ const ProjectContext = createContext<ProjectContextProps>({
         },
         deleteProject: async () => {
             throw Error('not implemented')
+        },
+        getTickets: async () => {
+            throw Error('not implemented')
+        },
+        getTicket: async () => {
+            throw Error('not implemented')
+        },
+        createTicket: async () => {
+            throw Error('not implemented')
+        },
+        deleteTicket: async () => {
+            throw Error('not implemented')
+        },
+        updateTicket: async () => {
+            throw Error('not implemented')
         }
     },
-    userId: undefined,
+    userId: null,
     signIn: () => {
+        throw Error('not implemented')
+    },
+    setProject: () => {
         throw Error('not implemented')
     }
 });
@@ -59,15 +85,15 @@ interface ProjectContextProviderProps {
 const apiBasePath = "http://0.0.0.0:3034/dev";
 
 export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ children }) => {
-    const [ userId, setUserId ] = useState<number | undefined>(getIdFromLocalStorage('userId'));
-    const [ projectId, setProjectId ] = useState<number | undefined>(getIdFromLocalStorage('projectId'));
+    const [ userId, setUserId ] = useState<number | null>(getIdFromLocalStorage('userId'));
+    const [ projectId, setProjectId ] = useState<number | null>(getIdFromLocalStorage('projectId'));
 
     useEffect(() => {
-        if (userId) saveToLocalStorage('userId', JSON.stringify(userId));
+        saveToLocalStorage('userId', JSON.stringify(userId));
     }, [userId]);
 
     useEffect(() => {
-        if (projectId) saveToLocalStorage('projectId', JSON.stringify(projectId));
+        saveToLocalStorage('projectId', JSON.stringify(projectId));
     }, [projectId]);
 
     const apiClient: APIClient = useMemo(() => {
@@ -81,6 +107,10 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
 
         const deleteRequest = async (path: string): Promise<Response> => {
             return await fetch(apiBasePath + path, { method: 'DELETE' });
+        }
+
+        const putRequest = async (path: string, body: string): Promise<Response> => {
+            return await fetch(apiBasePath + path, { method: 'PUT', body: body });
         }
 
         const getUsers =async (): Promise<User[]> => {
@@ -166,6 +196,56 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const getTickets = async (projectId: number): Promise<Ticket[]> => {
+            const response = await getRequest(`/tickets/${projectId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.tickets;
+            } else {
+                throw json;
+            }
+        }
+
+        const getTicket = async (ticketId: number, queryParams: any): Promise<Ticket> => {
+            const response = await getRequest(`/ticket/${ticketId}?param=paramval`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.ticket;
+            } else {
+                throw json;
+            }
+        }
+
+        const createTicket = async (ticket: TicketBody): Promise<number> => {
+            const response = await postRequest(`/tickets`, JSON.stringify(ticket));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const deleteTicket = async (ticketId: number): Promise<number> => {
+            const response = await deleteRequest(`/tickets/${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const updateTicket = async (ticketId: number, ticket: TicketBody): Promise<number> => {
+            const response = await putRequest(`/tickets/${ticketId}`, JSON.stringify(ticket));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
         return{
             getUsers,
             getUser,
@@ -174,7 +254,12 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getProjects,
             getProject,
             createProject,
-            deleteProject
+            deleteProject,
+            getTickets,
+            getTicket,
+            createTicket,
+            deleteTicket,
+            updateTicket
         }
     }, []);
 
@@ -182,10 +267,15 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         setUserId(userId);
     }, []);
 
+    const setProject = useCallback((projectId: number) => {
+        setProjectId(projectId);
+    }, []);
+
     const projectContext: ProjectContextProps = {
         apiClient,
         userId,
-        signIn
+        signIn,
+        setProject
     };
 
     return <ProjectContext.Provider value={projectContext}>{children}</ProjectContext.Provider>;
@@ -196,9 +286,13 @@ const saveToLocalStorage = (itemName: string, itemObj: string) => {
     localStorage.setItem(itemName, itemObj);
 }
 
-const getIdFromLocalStorage = (keyName: string): number | undefined => {
-    const id = localStorage.getItem(keyName);
-    return id && typeof id != 'undefined' ? JSON.parse(id) : undefined;
+const getIdFromLocalStorage = (keyName: string): number | null => {
+    try {
+        const id = localStorage.getItem(keyName);
+        return id ? JSON.parse(id) : null;
+    } catch (e) {
+        return null;
+    }
 }
 
 export const useProjectContext = () => useContext(ProjectContext);
