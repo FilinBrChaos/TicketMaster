@@ -29,9 +29,9 @@ CREATE TABLE "ticket" (
   state ticket_state,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
-  assigned_user_id bigserial,
+  assigned_user_id int,
   project_id bigserial,
-  topic_id bigserial,
+  topic_id int,
   CONSTRAINT fk_project_id
   FOREIGN KEY (project_id) 
   REFERENCES project (id)
@@ -70,10 +70,14 @@ CREATE TABLE "ticket_label" (
 CREATE TABLE "comment" (
   id bigserial PRIMARY KEY,
   comment VARCHAR NOT NULL,
-  user_name VARCHAR NOT NULL,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
+  user_id bigserial,
   project_id bigserial,
+  CONSTRAINT fk_user_id
+  FOREIGN KEY (user_id) 
+  REFERENCES user (id)
+  ON DELETE CASCADE,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
   REFERENCES project (id)

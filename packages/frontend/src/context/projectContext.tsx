@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { Project, User, UserBody, ProjectBody, Ticket, TicketBody } from '../../lib/types';
+import { Project, User, UserBody, ProjectBody, Ticket, TicketBody, Label, LabelBody } from '../../lib/types';
 
 
 interface APIClient {
@@ -13,18 +13,26 @@ interface APIClient {
     createProject: (project: ProjectBody) => Promise<number>;
     deleteProject: (projectId: number) => Promise<number>;
     
-    getTickets: (projectId: number) => Promise<Ticket[]>;
-    getTicket: (ticketId: number, queryParams: any) => Promise<Ticket>;
+    getTickets: (projectId: number, queryParams?: any) => Promise<Ticket[]>;
+    getTicket: (ticketId: number) => Promise<Ticket>;
     createTicket: (ticket: TicketBody) => Promise<number>;
     deleteTicket: (ticketId: number) => Promise<number>;
     updateTicket: (ticketId: number, ticket: TicketBody) => Promise<number>;
+
+    getLabels: (projectId: number, queryParams?: any) => Promise<Label[]>;
+    getLabel: (labelId: number) => Promise<Label>;
+    createLabel: (label: LabelBody) => Promise<number>;
+    deleteLabel: (labelId: number) => Promise<number>;
+
 }
 
 export interface ProjectContextProps {
     apiClient: APIClient;
     userId: number | null;
+    projectId: number | null;
     signIn: (userId: number) => void;
     setProject: (projectId: number) => void;
+    getProject: () => number;
 }
 
 const ProjectContext = createContext<ProjectContextProps>({
@@ -67,16 +75,39 @@ const ProjectContext = createContext<ProjectContextProps>({
         },
         updateTicket: async () => {
             throw Error('not implemented')
+        },
+        getLabels: async () => {
+            throw Error('not implemented')
+        },
+        getLabel: async () => {
+            throw Error('not implemented')
+        },
+        createLabel: async () => {
+            throw Error('not implemented')
+        },
+        deleteLabel: async () => {
+            throw Error('not implemented')
         }
     },
     userId: null,
+    projectId: null,
     signIn: () => {
         throw Error('not implemented')
     },
     setProject: () => {
         throw Error('not implemented')
+    },
+    getProject: () => {
+        throw Error('not implemented');
     }
 });
+
+const getBaseHeaders = (): any => {
+    return {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+}
 
 interface ProjectContextProviderProps {
     children: any;
@@ -98,19 +129,20 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
 
     const apiClient: APIClient = useMemo(() => {
         const getRequest = async (path: string): Promise<Response> => {
-            return await fetch(apiBasePath + path, { method: 'GET' });
+            
+            return await fetch(apiBasePath + path, { method: 'GET', headers: getBaseHeaders() });
         };
 
         const postRequest = async (path: string, body?: string): Promise<Response> => {
-            return await fetch(apiBasePath + path, { method: 'POST', body: body });
+            return await fetch(apiBasePath + path, { method: 'POST', body: body, headers: getBaseHeaders() });
         }
 
         const deleteRequest = async (path: string): Promise<Response> => {
-            return await fetch(apiBasePath + path, { method: 'DELETE' });
+            return await fetch(apiBasePath + path, { method: 'DELETE', headers: getBaseHeaders() });
         }
 
         const putRequest = async (path: string, body: string): Promise<Response> => {
-            return await fetch(apiBasePath + path, { method: 'PUT', body: body });
+            return await fetch(apiBasePath + path, { method: 'PUT', body: body, headers: getBaseHeaders() });
         }
 
         const getUsers =async (): Promise<User[]> => {
@@ -196,9 +228,10 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getTickets = async (projectId: number): Promise<Ticket[]> => {
+        const getTickets = async (projectId: number, queryParams?: any): Promise<Ticket[]> => {
             const response = await getRequest(`/tickets/${projectId}`);
             const json = await response.json();
+            console.log(JSON.stringify(json));
             if (response.ok) {
                 return json.tickets;
             } else {
@@ -206,8 +239,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getTicket = async (ticketId: number, queryParams: any): Promise<Ticket> => {
-            const response = await getRequest(`/ticket/${ticketId}?param=paramval`);
+        const getTicket = async (ticketId: number): Promise<Ticket> => {
+            const response = await getRequest(`/ticket/${ticketId}`);
             const json = await response.json();
             if (response.ok) {
                 return json.ticket;
@@ -217,6 +250,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         }
 
         const createTicket = async (ticket: TicketBody): Promise<number> => {
+            console.log(JSON.stringify(ticket));
             const response = await postRequest(`/tickets`, JSON.stringify(ticket));
             const json = await response.json();
             if (response.ok) {
@@ -246,6 +280,49 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const getLabels = async (projectId: number, queryParams?: any): Promise<Ticket[]> => {
+            const response = await getRequest(`/labels/${projectId}`);
+            const json = await response.json();
+            console.log(JSON.stringify(json));
+            if (response.ok) {
+                return json.labels;
+            } else {
+                throw json;
+            }
+        }
+
+        const getLabel = async (labelId: number): Promise<Ticket> => {
+            const response = await getRequest(`/label/${labelId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.label;
+            } else {
+                throw json;
+            }
+        }
+
+        const createLabel = async (label: LabelBody): Promise<number> => {
+            console.log(JSON.stringify(label));
+            const response = await postRequest(`/labels`, JSON.stringify(label));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const deleteLabel = async (labelId: number): Promise<number> => {
+            const response = await deleteRequest(`/labels/${labelId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+
         return{
             getUsers,
             getUser,
@@ -259,7 +336,11 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getTicket,
             createTicket,
             deleteTicket,
-            updateTicket
+            updateTicket,
+            getLabels,
+            getLabel,
+            createLabel,
+            deleteLabel
         }
     }, []);
 
@@ -271,11 +352,18 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         setProjectId(projectId);
     }, []);
 
+    const getProject = useCallback(() => {
+        if (projectId) return projectId;
+        throw Error('Project id is not present');
+    }, [projectId])
+
     const projectContext: ProjectContextProps = {
         apiClient,
         userId,
+        projectId,
         signIn,
-        setProject
+        setProject,
+        getProject
     };
 
     return <ProjectContext.Provider value={projectContext}>{children}</ProjectContext.Provider>;

@@ -1,19 +1,17 @@
 import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
 import { lambdaResponse } from "../../../lib/lambda";
 import { setupApiPool } from "../../../lib/database";
+import { deleteWithId } from "../../../services/dbservice";
 
 const pool = setupApiPool();
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const params = event.queryStringParameters;
-    console.log('query params ' + JSON.stringify(params));
-    
-    const projectId = parseRequestString(event);
+    const labelId = parseRequestString(event);
 
-    const result = await pool.query(`SELECT * FROM "ticket" where project_id=${projectId}`);
+    const dbOut = await deleteWithId(pool, 'label', labelId);
 
-    return lambdaResponse(200, { tickets: result.rows });
+    return lambdaResponse(200, { id: dbOut.rows[0] });
   } catch (e) {
     return lambdaResponse(500, { error: JSON.stringify(e) });
   }
@@ -22,9 +20,9 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
 const parseRequestString = (event: APIGatewayProxyEvent) => {
     const { pathParameters } = event;
     if (!pathParameters) throw Error('Search parameters must be specified');
-    const { projId } = pathParameters;
-    if (!projId) throw Error('Project id must be specified in url path params as /tickets/{projId}');
-    const id = Number(projId);
-    if (!id) throw Error("Project id must be a number");
+    const { labelId } = pathParameters;
+    if (!labelId) throw Error('Label id must be specified in url path params as /labels/{labelId}');
+    const id = Number(labelId);
+    if (!id) throw Error("Label id must be a number");
     return id;
-  };
+};

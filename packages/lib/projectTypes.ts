@@ -31,6 +31,8 @@ export interface LabelBody extends ProjectType {
 
 export interface Ticket extends TicketBody {
     id: number;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface TicketBody extends ProjectType {
@@ -53,10 +55,13 @@ export interface TicketLabel {
     label_id: number;
 }
 
-export interface Comment {
+export interface Comment extends CommentBody {
     id?: number;
+}
+
+export interface CommentBody extends ProjectType {
     comment: string;
-    user_name: string;
+    user_id: string;
     project_id: number;
 }
 

@@ -10,6 +10,8 @@ export type LambdaResponseFunc = (
 
 const defaultHeaders = {
   'Access-Control-Allow-Origin': '*',
+  "Access-Control-Allow-Credentials" : true,
+  "Content-Type": "application/json"
 };
 
 export const lambdaResponse: LambdaResponseFunc = (statusCode, body, headers = defaultHeaders) => {
@@ -18,7 +20,7 @@ export const lambdaResponse: LambdaResponseFunc = (statusCode, body, headers = d
     headers,
     body: body ? JSON.stringify(body) : '',
   };
-  console.log('Response (first 10000 chars):', JSON.stringify(response).substr(0, 10000));
+  console.log('Response (first 100000 chars):', JSON.stringify(response).substr(0, 100000));
 
   return Promise.resolve(response);
 };
