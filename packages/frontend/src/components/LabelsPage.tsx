@@ -1,4 +1,3 @@
-import { Label, LabelBody } from '../../lib/types';
 import { LoadingPage } from './LoadingPage';
 import { CreateLabelDialog } from './CreateLabelDialog';
 import { useState } from 'react';
@@ -6,6 +5,7 @@ import { useProjectContext } from '../context/ProjectContext';
 import { LabelCard } from './LabelCard';
 import { v4 } from 'uuid';
 import { UnderlineProjHeader } from './UnderlineProjHeader';
+import { Label, LabelBody } from '../../../proj-api/dist/lib/projectTypes';
 
 interface LabelsPageProps {
     labels: Label[];

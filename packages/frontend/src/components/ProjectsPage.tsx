@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useProjectContext } from '../context/ProjectContext';
 import { BaseHeader } from './BaseHeader';
 import { ProjectCard } from './ProjectCard';
-import { Project, ProjectBody } from '../../lib/types';
 import { LoadingPage } from './LoadingPage';
 import { v4 } from 'uuid';
 import { CreateProjectCard } from './CreateProjectCard';
 import { useNavigate } from 'react-router-dom';
+import { Project, ProjectBody } from '../../../proj-api/dist/lib/projectTypes';
 
 interface ProjectsPageProps {
     projects: Project[];

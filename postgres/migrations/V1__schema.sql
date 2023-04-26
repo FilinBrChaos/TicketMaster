@@ -76,7 +76,7 @@ CREATE TABLE "comment" (
   project_id bigserial,
   CONSTRAINT fk_user_id
   FOREIGN KEY (user_id) 
-  REFERENCES user (id)
+  REFERENCES "user" (id)
   ON DELETE CASCADE,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 

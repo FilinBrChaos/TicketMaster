@@ -2,8 +2,8 @@ import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
 import { lambdaResponse } from "../../../lib/lambda";
 import { setupApiPool } from "../../../lib/database";
 import { createRecord } from '../../../services/dbservice';
-import { Project, ProjectBody } from '../../../lib/types';
 import { parseEvent } from '../../../lib/validations';
+import { ProjectBody } from "../../../../lib/projectTypes";
 
 const pool = setupApiPool();
 

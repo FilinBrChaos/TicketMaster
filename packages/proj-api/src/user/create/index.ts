@@ -3,7 +3,7 @@ import { lambdaResponse } from "../../../lib/lambda";
 import { setupApiPool } from "../../../lib/database";
 import { parseEvent } from "../../../lib/validations"
 import { createRecord } from "../../../services/dbservice"
-import { User } from '../../../lib/types';
+import { User } from "../../../../lib/projectTypes";
 
 const pool = setupApiPool();
 

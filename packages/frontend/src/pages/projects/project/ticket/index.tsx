@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { useLoaderData, Await } from "react-router-dom";
-import { Ticket } from "../../../../../lib/types";
 import { TicketPage } from "../../../../components/TicketPage";
+import { Ticket } from "../../../../../../proj-api/dist/lib/projectTypes";
 
 
 export const TicketLoader = (): JSX.Element => {

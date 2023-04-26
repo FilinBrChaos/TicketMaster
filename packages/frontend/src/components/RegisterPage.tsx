@@ -2,9 +2,9 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, Di
 import { UserCard } from "./UserCard";
 import { useState } from 'react';
 import { useProjectContext } from '../context/ProjectContext';
-import { User } from '../../lib/types';
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid'
+import { User } from "../../../proj-api/dist/lib/projectTypes";
 
 interface RegisterPageProps {
     users: User[];

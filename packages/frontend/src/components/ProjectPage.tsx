@@ -1,4 +1,3 @@
-import { Project, TicketBody, Ticket } from '../../lib/types';
 import { LoadingPage } from "./LoadingPage";
 import { useLocation } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext';
@@ -9,6 +8,7 @@ import { TicketCard } from "./TicketCard";
 import { palette } from '../context/ProjectThemeProvider';
 import { useState } from 'react';
 import { v4 } from 'uuid';
+import { Project, Ticket, TicketBody } from "../../../proj-api/dist/lib/projectTypes";
 
 interface ProjectPageProps {
     project?: Project;

@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { useLoaderData, Await, useLocation, Outlet } from 'react-router-dom';
-import { Label } from '../../../../../lib/types';
 import { LabelsPage } from '../../../../components/LabelsPage';
+import { Label } from '../../../../../../proj-api/dist/lib/projectTypes';
 
 export default function Labels(): JSX.Element {
     const labelsPromise = useLoaderData() as { labels: Label[] };

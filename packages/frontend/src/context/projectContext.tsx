@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { Project, User, UserBody, ProjectBody, Ticket, TicketBody, Label, LabelBody } from '../../lib/types';
+import { User, UserBody, Project, ProjectBody, Ticket, TicketBody, Label, LabelBody } from '../../../proj-api/dist/lib/projectTypes';
 
 
 interface APIClient {

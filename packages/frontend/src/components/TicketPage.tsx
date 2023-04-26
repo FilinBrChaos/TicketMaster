@@ -1,4 +1,4 @@
-import { Ticket } from "../../lib/types";
+import { Ticket } from "../../../proj-api/dist/lib/projectTypes";
 
 interface TicketPageProps {
     ticket: Ticket;

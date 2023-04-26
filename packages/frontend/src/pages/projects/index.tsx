@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
-import { Project } from '../../../lib/types';
 import { useLoaderData, Await, useLocation, Outlet } from 'react-router-dom';
 import ProjectsPage from '../../components/ProjectsPage';
+import { Project } from '../../../../proj-api/dist/lib/projectTypes';
 
 export default function Projects(): JSX.Element {
     const projectsPromise = useLoaderData() as { projects: Project[] };

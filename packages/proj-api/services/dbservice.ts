@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from "pg";
-import { ProjectType } from "../lib/types";
+import { ProjectType } from "../../lib/projectTypes";
 
 export const insertIn = async (pool: Pool, table: string, columns: string[], values: string[]): Promise<QueryResult<any>> => {
     const dbOut = await pool.query(
