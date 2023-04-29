@@ -6,22 +6,36 @@ const pool = setupApiPool();
 
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
-    const labelId = parseRequestString(event);
+    const queryParams = event.queryStringParameters;
 
-    const dbOut = await pool.query(`SELECT * FROM "label" where id=${labelId}`);
+    if (!queryParams) throw { message: 'query params must be present' }
+    if (!queryParams.ticket_id && !queryParams.topic_id) throw { message: 'One of "ticket_id" or "topic_id" params must be present in request params' }
 
-    return lambdaResponse(200, { label: dbOut.rows[0] });
+    let dbOut;
+
+    if (queryParams.ticket_id) 
+      dbOut = await pool.query(`SELECT 
+        U.name as "user_name", 
+        U.color as "user_color", 
+        C.id, 
+        C.user_id, 
+        C.project_id, 
+        C.comment, 
+        C.created_at, 
+        C.updated_at 
+      FROM 
+        "comment" C, "ticket_comment" TC, "user" U 
+      WHERE C.id=TC.comment_id AND TC.ticket_id=${queryParams.ticket_id} AND U.id=C.user_id`);
+
+    if (queryParams.topic_id)
+      dbOut = await pool.query(`SELECT * FROM
+      "comment" C, "topic_comment" TC 
+      WHERE C.id=TC.comment_id AND TC.topic_ic=${queryParams.topic_id}`)
+
+    
+
+    return lambdaResponse(200, { comments: dbOut?.rows });
   } catch (e) {
     return lambdaResponse(500, { error: JSON.stringify(e) });
   }
 }
-
-const parseRequestString = (event: APIGatewayProxyEvent) => {
-    const { pathParameters } = event;
-    if (!pathParameters) throw Error('Search parameters must be specified');
-    const { labelId } = pathParameters;
-    if (!labelId) throw Error('Label id must be specified in url path params as /label/{labelId}');
-    const id = Number(labelId);
-    if (!id) throw Error("Label id must be a number");
-    return id;
-};

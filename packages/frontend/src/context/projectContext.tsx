@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { User, UserBody, Project, ProjectBody, Ticket, TicketBody, Label, LabelBody } from '../../../proj-api/dist/lib/projectTypes';
+import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody } from '../../../lib/projectTypes';
 
 
 interface APIClient {
@@ -24,6 +24,8 @@ interface APIClient {
     createLabel: (label: LabelBody) => Promise<number>;
     deleteLabel: (labelId: number) => Promise<number>;
 
+    commentTicket: (ticketId: number, comment: CommentBody) => Promise<number>;
+    getTicketComments: (ticketId: number) => Promise<Comment[]>;
 }
 
 export interface ProjectContextProps {
@@ -33,6 +35,7 @@ export interface ProjectContextProps {
     signIn: (userId: number) => void;
     setProject: (projectId: number) => void;
     getProject: () => number;
+    getUser: () => number;
 }
 
 const ProjectContext = createContext<ProjectContextProps>({
@@ -87,6 +90,12 @@ const ProjectContext = createContext<ProjectContextProps>({
         },
         deleteLabel: async () => {
             throw Error('not implemented')
+        },
+        commentTicket: async () => {
+            throw Error('not implemented')
+        },
+        getTicketComments: async () => {
+            throw Error('not implemented')
         }
     },
     userId: null,
@@ -99,6 +108,9 @@ const ProjectContext = createContext<ProjectContextProps>({
     },
     getProject: () => {
         throw Error('not implemented');
+    },
+    getUser: () => {
+        throw Error('not implemented')
     }
 });
 
@@ -280,7 +292,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getLabels = async (projectId: number, queryParams?: any): Promise<Ticket[]> => {
+        const getLabels = async (projectId: number, queryParams?: any): Promise<Label[]> => {
             const response = await getRequest(`/labels/${projectId}`);
             const json = await response.json();
             console.log(JSON.stringify(json));
@@ -291,7 +303,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getLabel = async (labelId: number): Promise<Ticket> => {
+        const getLabel = async (labelId: number): Promise<Label> => {
             const response = await getRequest(`/label/${labelId}`);
             const json = await response.json();
             if (response.ok) {
@@ -322,6 +334,25 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const commentTicket = async (ticketId: number, comment: CommentBody): Promise<number> => {
+            const response = await postRequest(`/comments?ticket_id=${ticketId}`, JSON.stringify(comment));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const getTicketComments = async (ticketId: number): Promise<Comment[]> => {
+            const response = await getRequest(`/comments?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.comments;
+            } else {
+                throw json;
+            }
+        }
 
         return{
             getUsers,
@@ -340,7 +371,9 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getLabels,
             getLabel,
             createLabel,
-            deleteLabel
+            deleteLabel,
+            commentTicket,
+            getTicketComments
         }
     }, []);
 
@@ -355,7 +388,12 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
     const getProject = useCallback(() => {
         if (projectId) return projectId;
         throw Error('Project id is not present');
-    }, [projectId])
+    }, [projectId]);
+
+    const getUser = useCallback(() => {
+        if (userId) return userId;
+        throw Error('User id is not present');
+    }, [userId]);
 
     const projectContext: ProjectContextProps = {
         apiClient,
@@ -363,7 +401,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         projectId,
         signIn,
         setProject,
-        getProject
+        getProject,
+        getUser
     };
 
     return <ProjectContext.Provider value={projectContext}>{children}</ProjectContext.Provider>;

@@ -8,7 +8,8 @@ import { TicketCard } from "./TicketCard";
 import { palette } from '../context/ProjectThemeProvider';
 import { useState } from 'react';
 import { v4 } from 'uuid';
-import { Project, Ticket, TicketBody } from "../../../proj-api/dist/lib/projectTypes";
+import { CreateTicketDialog } from "./CreateTicketDialog";
+import { Project, Ticket } from "../../../lib/projectTypes";
 
 interface ProjectPageProps {
     project?: Project;
@@ -27,26 +28,15 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
     //     context.apiClient.getTicket(0);
     // }, []);
 
-    const createTicketHandler = () => {
-        const ticket: TicketBody = { 
-            project_id: context.getProject(),
-            name: 'name'
-        }
-        context.apiClient.createTicket(ticket).then(() => {
-            context.apiClient.getTickets(context.getProject()).then((res) => {
-                setTickets(res)
-            })
-        })
-    }
 
     if (props.loading || !props.project) return <LoadingPage />
     return (
         <div className="flex flex-col items-center h-screen">
             <UnderlineProjHeader title={props.project.name}></UnderlineProjHeader>
             <div className="flex flex-col h-[86%] w-[70%] mt-[2%]">
-                <div className=" h-[7%]">
+                <div className="flex flex-row items-center h-[7%]">
                     <IconButton color="primary" onClick={() => { setOpenFiltersDialog(true) }}><Sort /></IconButton>
-                    <Button onClick={createTicketHandler}>create</Button>
+                    <CreateTicketDialog></CreateTicketDialog>
                 </div>
                 <Box className="flex flex-col h-[93%] rounded-lg">
                     <Box className="flex flex-row items-center border-b pl-4 h-[5%] rounded-t-lg" sx={{ backgroundColor: palette.secondary.main }}>
@@ -54,7 +44,7 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
                         <Typography sx={{ pl: 3 }}>Closed</Typography>
 
                     </Box>
-                    {tickets && tickets.map((ticket) => <TicketCard title={ticket.name} date={ticket.created_at} key={v4()}></TicketCard>)}
+                    {tickets && tickets.map((ticket) => <TicketCard ticket={ticket} key={v4()}></TicketCard>)}
                     
                 </Box>
             </div>

@@ -7,6 +7,8 @@ import Register from './pages/register';
 import Labels from './pages/projects/project/labels';
 import { TicketLoader } from './pages/projects/project/ticket';
 import ProjectLoader from './pages/projects/project/index';
+import { Slide, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { apiClient, getProject } = useProjectContext();
@@ -59,10 +61,16 @@ function App() {
             {
               path: 'ticket/:ticketId',
               element: <TicketLoader />,
-              loader: (args: LoaderFunctionArgs) => {
+              loader: async (args: LoaderFunctionArgs) => {
                 const ticketId = Number(args.params.ticketId);
                 if (!ticketId) throw Error('ticketId is not present in params')
-                return defer({ ticket: apiClient.getTicket(ticketId) });
+                const response = Promise.all([
+                  apiClient.getTicket(ticketId).then((res) => res),
+                  apiClient.getUsers().then((res) => res),
+                  apiClient.getLabels(getProject()).then((res) => res)
+                ]);
+                const [ ticket, assignedUsers, labels ] = await response;
+                return defer({ ticket, assignedUsers, labels });
               }
             }
 
@@ -73,6 +81,15 @@ function App() {
   ]);
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        transition={Slide}
+        autoClose={3000}
+        hideProgressBar
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <RouterProvider router={router} />
     </>
   );

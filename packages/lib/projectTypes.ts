@@ -27,6 +27,7 @@ export interface Label extends LabelBody {
 export interface LabelBody extends ProjectType {
     name: string;
     project_id: number;
+    color: string;
 }
 
 export interface Ticket extends TicketBody {
@@ -43,8 +44,11 @@ export interface TicketBody extends ProjectType {
     topic_id?: number;
 }
 
-export interface TicketComment {
-    id?: number;
+export interface TicketComment extends TicketCommentBody {
+    id: number;
+}
+
+export interface TicketCommentBody extends ProjectType {
     ticket_id: number;
     comment_id: number;
 }
@@ -56,7 +60,11 @@ export interface TicketLabel {
 }
 
 export interface Comment extends CommentBody {
-    id?: number;
+    id: number;
+    user_name: string;
+    user_color: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface CommentBody extends ProjectType {
@@ -79,8 +87,11 @@ export interface Topic {
     retro_id: number;
 }
 
-export interface TopicComment {
-    id?: number;
+export interface TopicComment extends TopicCommentBody {
+    id: number;
+}
+
+export interface TopicCommentBody extends ProjectType {
     topic_id: number;
     comment_id: number;
 }

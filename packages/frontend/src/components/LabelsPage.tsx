@@ -16,9 +16,10 @@ export const LabelsPage = (props: LabelsPageProps): JSX.Element => {
     const [ labels, setLabels ] = useState(props.labels);
     const context = useProjectContext();
 
-    const createLabelHandler = (labelName: string) => {
+    const createLabelHandler = (labelName: string, labelColor: string) => {
         const label: LabelBody = {
             project_id: context.getProject(),
+            color: labelColor,
             name: labelName
         }
         context.apiClient.createLabel(label).then(() => {

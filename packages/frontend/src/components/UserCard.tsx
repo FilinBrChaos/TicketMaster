@@ -1,5 +1,5 @@
 import { DeleteOutline } from '@mui/icons-material';
-import { Button, Typography, Box, IconButton } from '@mui/material';
+import { Typography, Box, IconButton } from '@mui/material';
 
 interface UserCardProps {
     name: string;
@@ -13,8 +13,8 @@ export function UserCard(props: UserCardProps): JSX.Element {
     return (
         <div className={'flex flex-row items-center mt-3 rounded-lg p-2' + (props.selected ? ' bg-slate-300 bg-opacity-80 ' : '')} >
             {/* <Button onClick={props.onUserClickHandler} sx={{ mb: 1 }} > */}
-                <div className=" flex flex-row w-64 h-12 items-center cursor-pointer justify-between" onClick={props.onUserClickHandler}>
-                    <Typography>{props.name}</Typography>
+                <div className="flex flex-row w-40 h-12 items-center cursor-pointer justify-between" onClick={props.onUserClickHandler}>
+                    <Typography className=' max-w-[120px] truncate'>{props.name}</Typography>
                     <Box sx={{ width: 35, height: 35, borderRadius: 100, backgroundColor: props.color }}></Box>
                 </div>
             {/* </Button> */}

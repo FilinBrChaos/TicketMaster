@@ -292,7 +292,7 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: comment
+          path: comments
           method: POST
           cors: true
 
@@ -307,7 +307,7 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: comment
+          path: comments
           method: GET
           cors: true
 
@@ -322,7 +322,7 @@ functions:
       postgresPassword:                 ${file(env/api-config.json):postgresPassword}
     events:
       - http:
-          path: comment
+          path: comments
           method: DELETE
           cors: true
 

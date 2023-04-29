@@ -42,9 +42,24 @@ CREATE TRIGGER updateTicketUpdatedAt BEFORE UPDATE
   ON "ticket" FOR EACH ROW EXECUTE PROCEDURE 
   "updateUpdatedAtColumn"();
 
+CREATE TABLE "assigned_user" (
+  id bigserial primary key,
+  user_id bigserial,
+  ticket_id bigserial,
+  CONSTRAINT fk_user_id 
+  FOREIGN KEY (user_id) 
+  REFERENCES "user" (id)
+  ON DELETE CASCADE,
+  CONSTRAINT fk_ticket_id 
+  FOREIGN KEY (ticket_id) 
+  REFERENCES ticket (id)
+  ON DELETE CASCADE
+);
+
 CREATE TABLE "label" (
   id bigserial PRIMARY KEY,
   name VARCHAR NOT NULL,
+  color VARCHAR,
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 

@@ -27,8 +27,8 @@ export const palette = {
     },
     secondary: {
       main: '#2c2e31',
-      dark: '#d1d0c5',
-      light: '#d1d0c5',
+      dark: '#1e1f21',
+      light: '#3b3e42',
       contrast: '#d1d0c5',
     },
     info: {

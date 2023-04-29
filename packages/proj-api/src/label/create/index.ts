@@ -14,8 +14,7 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
         if (!body.project_id) throw { message: "'project_id' cannot be null" }
         if (!body.name) throw { message: "'name' cannot be null" };
 
-        const label: LabelBody = { project_id: body.project_id, name: body.name }
-
+        const label: LabelBody = { project_id: body.project_id, name: body.name, color: body.color }
         const result = await createRecord(pool, 'label', label)
         return lambdaResponse(200, { message: "project", id: result.rows[0].id });
 
