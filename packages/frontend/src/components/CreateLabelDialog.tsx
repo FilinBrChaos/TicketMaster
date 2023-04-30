@@ -15,13 +15,13 @@ export const CreateLabelDialog = (props: CreateLabelDialogProps): JSX.Element =>
             <Button onClick={() => { setOpen(true) }}>create label</Button>
             <Dialog open={ open }>
                 <DialogTitle>Create ticket</DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Box sx={{ width: 50, height: 50, borderRadius: 8, mt: 4, mb: 2, backgroundColor: newLabelColor }}></Box>
-                    <Button onClick={() => { 
+                    <Button sx={{ mb: 4 }} onClick={() => { 
                         setNewLabelColor('#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6).toUpperCase()) 
                     }}>change</Button>
 
-                    <TextField onChange={(e) => {
+                    <TextField label="Name" onChange={(e) => {
                         if (!e.target.value) setLabelName('default');
                         else setLabelName(e.target.value);
                     }}></TextField>

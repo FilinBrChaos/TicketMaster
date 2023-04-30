@@ -26,6 +26,11 @@ interface APIClient {
 
     commentTicket: (ticketId: number, comment: CommentBody) => Promise<number>;
     getTicketComments: (ticketId: number) => Promise<Comment[]>;
+
+    assignUsersToTicket: (ticketId: number, usersIds: number[]) => Promise<void>;
+    getAssignedUsers: (ticketId: number) => Promise<User[]>;
+    getUnassignedUsers: (ticketId: number) => Promise<User[]>;
+    unassignUserFromTicket: (ticketId: number, userId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
@@ -95,6 +100,18 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         getTicketComments: async () => {
+            throw Error('not implemented')
+        },
+        assignUsersToTicket: async () => {
+            throw Error('not implemented')
+        },
+        getAssignedUsers: async () => {
+            throw Error('not implemented')
+        },
+        getUnassignedUsers: async () => {
+            throw Error('not implemented')
+        },
+        unassignUserFromTicket: async () => {
             throw Error('not implemented')
         }
     },
@@ -354,6 +371,47 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const assignUsersToTicket = async (ticketId: number, usersIds: number[]): Promise<void> => {
+            const postObj = {
+                assignUsers: usersIds.map((userId) => { return { user_id: userId, ticket_id: ticketId } })
+            }
+            const response = await postRequest(`/assign-users`, JSON.stringify(postObj));
+            const json = await response.json();
+            if (!response.ok) {
+                throw json;
+            }
+        }
+
+        const getAssignedUsers = async (ticketId: number): Promise<User[]> => {
+            const response = await getRequest(`/assign-users?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.assignedUsers;
+            } else {
+                throw json;
+            }
+        }
+
+        const getUnassignedUsers = async (ticketId: number): Promise<User[]> => {
+            const response = await getRequest(`/unassign-users?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.assignedUsers;
+            } else {
+                throw json;
+            }
+        }
+
+        const unassignUserFromTicket = async (ticketId: number, userId: number): Promise<number> => {
+            const response = await deleteRequest(`/assign-users?ticket_id=${ticketId}&user_id=${userId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
         return{
             getUsers,
             getUser,
@@ -373,7 +431,11 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             createLabel,
             deleteLabel,
             commentTicket,
-            getTicketComments
+            getTicketComments,
+            assignUsersToTicket,
+            getAssignedUsers,
+            getUnassignedUsers,
+            unassignUserFromTicket
         }
     }, []);
 

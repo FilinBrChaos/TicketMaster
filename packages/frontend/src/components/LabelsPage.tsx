@@ -35,7 +35,7 @@ export const LabelsPage = (props: LabelsPageProps): JSX.Element => {
             <UnderlineProjHeader title='todo'></UnderlineProjHeader>
             <div className="flex flex-col items-center justify-center h-[86%] w-[70%] mt-[2%]">
                 <div className='flex flex-col items-center justify-center'>
-                    { labels && labels.map(label => <LabelCard key={v4()} title={label.name}></LabelCard>) }
+                    { labels && labels.map(label => <LabelCard key={v4()} label={label} onDeleteClick={() => {}}></LabelCard>) }
                 </div>
                 <CreateLabelDialog onCreateButtonClick={createLabelHandler} ></CreateLabelDialog>
             </div>

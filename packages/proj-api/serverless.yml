@@ -326,6 +326,68 @@ functions:
           method: DELETE
           cors: true
 
+  assign-users:
+    handler: src/assign-users-to-ticket/assign-users/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: assign-users
+          method: POST
+          cors: true
+
+  get-assigned-users:
+    handler: src/assign-users-to-ticket/get-assigned-users/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: assign-users
+          method: GET
+          cors: true
+
+  get-unassigned-users:
+    handler: src/assign-users-to-ticket/get-unassigned-users/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: unassign-users
+          method: GET
+          cors: true
+
+  unassign-user:
+    handler: src/assign-users-to-ticket/unassign-user/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: assign-users
+          method: DELETE
+          cors: true
+
+
+
 plugins:
   - serverless-esbuild
   - serverless-offline

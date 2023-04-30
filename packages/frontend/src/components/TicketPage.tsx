@@ -5,13 +5,16 @@ import { palette } from '../context/ProjectThemeProvider';
 import { Send } from '@mui/icons-material';
 import { useProjectContext } from '../context/ProjectContext';
 import { useState, useEffect } from 'react';
-import { CommentBody, Comment, Ticket } from '../../../lib/projectTypes';
+import { CommentBody, Comment, Ticket, User, Label } from '../../../lib/projectTypes';
 import { toast } from 'react-toastify';
 import { CommentCard } from './CommentCard';
 import { v4 } from 'uuid';
+import { ChecklistDialog } from './ChecklistDialog';
 
 interface TicketPageProps {
     ticket: Ticket;
+    users: User[];
+    labels: Label[];
     loading?: boolean;
 }
 
@@ -19,13 +22,44 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
     const context = useProjectContext();
     const [ comments, setComments ] = useState<Comment[]>();
     const [ ticket, setTicket ] = useState(props.ticket);
+    const [ unassignedUsers, setUnassignedUsers ] = useState<User[]>([]);
+    const [ assignedUsers, setAssignedUsers ] = useState<User[]>([]);
     const [ commentText, setCommentText ] = useState('');
 
     useEffect(() => {
         context.apiClient.getTicketComments(ticket.id).then((res) => {
             setComments(res);
         })
+        context.apiClient.getUnassignedUsers(ticket.id).then((res) => {
+            setUnassignedUsers(res);
+            console.log(JSON.stringify(res))
+        })
+        context.apiClient.getAssignedUsers(ticket.id).then((res) => {
+            setAssignedUsers(res);
+        })
     }, []);
+
+    const assignUsersHandler = (usersIds: number[]) => {
+        context.apiClient.assignUsersToTicket(ticket.id, usersIds).then(() => {
+            context.apiClient.getAssignedUsers(ticket.id).then((res) => {
+                setAssignedUsers(res);
+            })
+            context.apiClient.getUnassignedUsers(ticket.id).then((res) => {
+                setUnassignedUsers(res);
+            })
+        })
+    }
+
+    const unassignUserHandler = (userId: number) => {
+        context.apiClient.unassignUserFromTicket(ticket.id, userId).then(() => {
+            context.apiClient.getAssignedUsers(ticket.id).then((res) => {
+                setAssignedUsers(res);
+            })
+            context.apiClient.getUnassignedUsers(ticket.id).then((res) => {
+                setUnassignedUsers(res);
+            })
+        })
+    }
 
     const commentHandler = () => {
         if (!commentText || commentText === '') toast.error('Cannot post empty comment');
@@ -74,8 +108,18 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
                 <div className="flex flex-col h-full w-[30%] border-l p-4">
                     <div className=" py-4 border-b">
                         <Typography>Assigned users</Typography>
-                        <UserCard name="user" color="white"></UserCard>
-                        <Button variant="contained">add</Button>
+                        {assignedUsers.map((user) => <UserCard key={v4()} 
+                                                                color={user.color} 
+                                                                name={user.name}
+                                                                onDeleteUserHandler={() => {unassignUserHandler(user.id)}}></UserCard>)}
+                        <ChecklistDialog buttonName='add' 
+                            onDialogSubmit={assignUsersHandler}
+                            layoutList={unassignedUsers.map((user) => { 
+                                return { 
+                                    id: user.id, 
+                                    element: <Typography>{user.name}</Typography> 
+                                }
+                            })}></ChecklistDialog>
 
                     </div>
                     <div className=" py-4 border-b">

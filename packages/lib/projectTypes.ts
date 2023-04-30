@@ -44,6 +44,15 @@ export interface TicketBody extends ProjectType {
     topic_id?: number;
 }
 
+export interface AssignedUser extends ProjectType {
+    id: number;
+}
+
+export interface AssignedUserBody extends ProjectType {
+    user_id: number;
+    ticket_id: number;
+}
+
 export interface TicketComment extends TicketCommentBody {
     id: number;
 }
