@@ -21,7 +21,8 @@ interface TicketPageProps {
 export const TicketPage = (props: TicketPageProps): JSX.Element => {
     const context = useProjectContext();
     const [ comments, setComments ] = useState<Comment[]>();
-    const [ ticket, setTicket ] = useState(props.ticket);
+    const [ ticket ] = useState(props.ticket);
+    const [ labels, setLabels ] = useState<Label[]>([]);
     const [ unassignedUsers, setUnassignedUsers ] = useState<User[]>([]);
     const [ assignedUsers, setAssignedUsers ] = useState<User[]>([]);
     const [ commentText, setCommentText ] = useState('');
@@ -36,6 +37,9 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
         })
         context.apiClient.getAssignedUsers(ticket.id).then((res) => {
             setAssignedUsers(res);
+        })
+        context.apiClient.getLabels(context.getProject()).then((res) => {
+            setLabels(res);
         })
     }, []);
 

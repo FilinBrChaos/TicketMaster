@@ -12,9 +12,13 @@ export const TicketCard = ({ ticket }: TicketCardProps): JSX.Element => {
     const ticketDate = new Date(ticket.created_at.replace(' ', 'T'));
 
     return (
-        <Box className="flex flex-row justify-between w-full h-16 border" sx={{ backgroundColor: palette.secondary.main }}>
+        <Box className={`flex flex-row justify-between w-full px-3 py-3 hover:bg-zinc-900`} sx={{ backgroundColor: palette.secondary.main }}>
             <div>
-                <Link to={`/projects/${id}/ticket/${ticket.id}`}>{ticket.name}</Link>
+                <Link to={`/projects/${id}/ticket/${ticket.id}`}>
+                    <Typography variant="h6">
+                        {ticket.name}
+                    </Typography>
+                </Link>
                 <Typography>Ticket short description</Typography>
             </div>
 

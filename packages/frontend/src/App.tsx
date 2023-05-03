@@ -9,6 +9,7 @@ import { TicketLoader } from './pages/projects/project/ticket';
 import ProjectLoader from './pages/projects/project/index';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { RetroLoader } from './pages/projects/project/retro/index';
 
 function App() {
   const { apiClient, getProject } = useProjectContext();
@@ -72,8 +73,14 @@ function App() {
                 const [ ticket, assignedUsers, labels ] = await response;
                 return defer({ ticket, assignedUsers, labels });
               }
+            },
+            {
+              path: 'retros',
+              element: <RetroLoader />,
+              loader: async (args: LoaderFunctionArgs) => {
+                return defer({ retros: apiClient.getRetros(getProject()) });
+              }
             }
-
           ]
         },
       ]

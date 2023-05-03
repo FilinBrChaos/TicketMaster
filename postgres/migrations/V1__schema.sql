@@ -11,7 +11,7 @@ CREATE FUNCTION "updateUpdatedAtColumn"()
 CREATE TABLE "user" (
   id bigserial primary key,
   name VARCHAR NOT NULL,
-  color VARCHAR
+  color VARCHAR(30)
 );
 
 CREATE TABLE "project" (
@@ -59,7 +59,7 @@ CREATE TABLE "assigned_user" (
 CREATE TABLE "label" (
   id bigserial PRIMARY KEY,
   name VARCHAR NOT NULL,
-  color VARCHAR,
+  color VARCHAR(30),
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
@@ -121,7 +121,7 @@ CREATE TYPE retro_state AS ENUM ('noting', 'grouping', 'voting', 'discussions');
 
 CREATE TABLE "retro" (
   id bigserial PRIMARY KEY,
-  name varchar,
+  name varchar NOT NULL,
   description varchar,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
@@ -139,7 +139,7 @@ CREATE TRIGGER updateRetroUpdatedAt BEFORE UPDATE
 
 CREATE TABLE "topic" (
   id bigserial PRIMARY KEY,
-  name varchar,
+  name varchar NOT NULL,
   description varchar,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
@@ -156,7 +156,7 @@ CREATE TRIGGER updateTopicUpdatedAt BEFORE UPDATE
 
 CREATE TABLE "note" (
   id bigserial PRIMARY KEY,
-  title varchar,
+  title varchar NOT NULL,
   description varchar,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
@@ -174,12 +174,16 @@ CREATE TRIGGER updateNoteUpdatedAt BEFORE UPDATE
 
 create TABLE "topic_rating" (
   id bigserial PRIMARY KEY,
-  score INT,
+  score INT NOT NULL,
   user_id bigserial,
   topic_id bigserial,
   CONSTRAINT fk_topic_id 
   FOREIGN KEY (topic_id) 
   REFERENCES topic (id)
+  ON DELETE CASCADE,
+  CONSTRAINT fk_user_id 
+  FOREIGN KEY (user_id) 
+  REFERENCES "user" (id)
   ON DELETE CASCADE
 );
 

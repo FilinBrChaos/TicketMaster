@@ -42,6 +42,11 @@ export interface TicketBody extends ProjectType {
     assigned_user_id?: number;
     project_id: number;
     topic_id?: number;
+    state?: TicketState;
+}
+
+export enum TicketState {
+    'Open', 'Closed'
 }
 
 export interface AssignedUser extends ProjectType {
@@ -83,10 +88,20 @@ export interface CommentBody extends ProjectType {
 }
 
 export interface Retro {
-    id?: number;
+    id: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface RetroBody {
     name: string;
-    description: string;
+    description?: string;
     project_id: number;
+    retro_state?: RetroState;
+}
+
+export enum RetroState {
+    'noting', 'grouping', 'voting', 'discussions'
 }
 
 export interface Topic {

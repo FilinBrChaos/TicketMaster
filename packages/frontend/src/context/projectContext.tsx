@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody } from '../../../lib/projectTypes';
+import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody, Retro, RetroBody } from '../../../lib/projectTypes';
 
 
 interface APIClient {
@@ -19,7 +19,7 @@ interface APIClient {
     deleteTicket: (ticketId: number) => Promise<number>;
     updateTicket: (ticketId: number, ticket: TicketBody) => Promise<number>;
 
-    getLabels: (projectId: number, queryParams?: any) => Promise<Label[]>;
+    getLabels: (projectId: number, queryParams?: string) => Promise<Label[]>;
     getLabel: (labelId: number) => Promise<Label>;
     createLabel: (label: LabelBody) => Promise<number>;
     deleteLabel: (labelId: number) => Promise<number>;
@@ -31,6 +31,11 @@ interface APIClient {
     getAssignedUsers: (ticketId: number) => Promise<User[]>;
     getUnassignedUsers: (ticketId: number) => Promise<User[]>;
     unassignUserFromTicket: (ticketId: number, userId: number) => Promise<number>;
+
+    getRetros: (projectId: number) => Promise<Retro[]>;
+    getRetro: (retroId: number) => Promise<Retro>;
+    createRetro: (retro: RetroBody) => Promise<number>;
+    deleteRetro: (retroId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
@@ -113,7 +118,19 @@ const ProjectContext = createContext<ProjectContextProps>({
         },
         unassignUserFromTicket: async () => {
             throw Error('not implemented')
-        }
+        },
+        getRetros: async () => {
+            throw Error('not implemented')
+        },
+        getRetro: async () => {
+            throw Error('not implemented')
+        },
+        createRetro: async () => {
+            throw Error('not implemented')
+        },
+        deleteRetro: async () => {
+            throw Error('not implemented')
+        },
     },
     userId: null,
     projectId: null,
@@ -309,8 +326,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getLabels = async (projectId: number, queryParams?: any): Promise<Label[]> => {
-            const response = await getRequest(`/labels/${projectId}`);
+        const getLabels = async (projectId: number, queryParams?: string): Promise<Label[]> => {
+            const response = await getRequest(`/labels/${projectId}${queryParams ? "?" + queryParams : ''}`);
             const json = await response.json();
             console.log(JSON.stringify(json));
             if (response.ok) {
@@ -412,6 +429,46 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const getRetros = async (projectId: number): Promise<Retro[]> => {
+            const response = await getRequest(`/retros/${projectId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.retros;
+            } else {
+                throw json;
+            }
+        }
+
+        const getRetro = async (retroId: number): Promise<Retro> => {
+            const response = await getRequest(`/retro/${retroId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.retro;
+            } else {
+                throw json;
+            }
+        }
+
+        const createRetro = async (retro: RetroBody): Promise<number> => {
+            const response = await postRequest(`/retros`, JSON.stringify(retro));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const deleteRetro = async (retroId: number): Promise<number> => {
+            const response = await deleteRequest(`/retros/${retroId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
         return{
             getUsers,
             getUser,
@@ -435,7 +492,11 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             assignUsersToTicket,
             getAssignedUsers,
             getUnassignedUsers,
-            unassignUserFromTicket
+            unassignUserFromTicket,
+            getRetros,
+            getRetro,
+            createRetro,
+            deleteRetro
         }
     }, []);
 

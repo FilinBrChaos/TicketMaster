@@ -38,8 +38,8 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
                     <IconButton color="primary" onClick={() => { setOpenFiltersDialog(true) }}><Sort /></IconButton>
                     <CreateTicketDialog></CreateTicketDialog>
                 </div>
-                <Box className="flex flex-col h-[93%] rounded-lg">
-                    <Box className="flex flex-row items-center border-b pl-4 h-[5%] rounded-t-lg" sx={{ backgroundColor: palette.secondary.main }}>
+                <Box className={`flex flex-col max-h-[93%] rounded-lg overflow-hidden`}>
+                    <Box className="flex flex-row items-center pl-4 h-[40px]" sx={{ backgroundColor: palette.secondary.light }}>
                         <Typography>Opened</Typography>
                         <Typography sx={{ pl: 3 }}>Closed</Typography>
 

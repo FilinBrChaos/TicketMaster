@@ -19,7 +19,7 @@ export const UnderlineProjHeader = (props: UnderlineProjHeaderProps): JSX.Elemen
             <div className=" ml-10">
                 <Button onClick={() => { navigate('/projects/' + id) }}>Tickets</Button>
                 <Button onClick={() => { navigate('/projects/' + id + '/labels') }}>Labels</Button>
-                <Button>Retro</Button>
+                <Button onClick={() => { navigate('/projects/' + id + '/retros') }}>Retro</Button>
             </div>
         </div>
 
