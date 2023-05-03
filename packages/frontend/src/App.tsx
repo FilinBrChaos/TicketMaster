@@ -9,7 +9,8 @@ import { TicketLoader } from './pages/projects/project/ticket';
 import ProjectLoader from './pages/projects/project/index';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { RetroLoader } from './pages/projects/project/retro/index';
+import { RetroLoader } from './pages/projects/project/retros/index';
+import { RetroPage } from './components/RetroPage';
 
 function App() {
   const { apiClient, getProject } = useProjectContext();
@@ -79,6 +80,18 @@ function App() {
               element: <RetroLoader />,
               loader: async (args: LoaderFunctionArgs) => {
                 return defer({ retros: apiClient.getRetros(getProject()) });
+              }
+            },
+            {
+              path: 'retros/:retroId',
+              element: <RetroPage />,
+              loader: async (args: LoaderFunctionArgs) => {
+                const retroId = Number(args.params.retroId);
+                if (!retroId) throw Error('retroId is not present in params')
+                return defer({ retro: apiClient.getRetro(retroId), 
+                  notes: apiClient.getNotes(retroId), 
+                  topics: apiClient.getTopics(retroId) 
+                });
               }
             }
           ]

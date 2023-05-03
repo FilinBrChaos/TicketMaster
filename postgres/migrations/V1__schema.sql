@@ -117,7 +117,7 @@ CREATE TABLE "ticket_comment" (
   ON DELETE CASCADE
 );
 
-CREATE TYPE retro_state AS ENUM ('noting', 'grouping', 'voting', 'discussions');
+CREATE TYPE retro_state AS ENUM ('nothing', 'grouping', 'voting', 'discussions');
 
 CREATE TABLE "retro" (
   id bigserial PRIMARY KEY,
@@ -125,7 +125,7 @@ CREATE TABLE "retro" (
   description varchar,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
-  state retro_state,
+  state retro_state default 'grouping',
   project_id bigserial,
   CONSTRAINT fk_project_id 
   FOREIGN KEY (project_id) 
@@ -160,7 +160,7 @@ CREATE TABLE "note" (
   description varchar,
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
-  topic_id bigserial,
+  topic_id int,
   retro_id bigserial,
   CONSTRAINT fk_retro_id 
   FOREIGN KEY (retro_id) 

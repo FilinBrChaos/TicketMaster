@@ -87,7 +87,7 @@ export interface CommentBody extends ProjectType {
     project_id: number;
 }
 
-export interface Retro {
+export interface Retro extends RetroBody {
     id: number;
     created_at: string;
     updated_at: string;
@@ -97,17 +97,22 @@ export interface RetroBody {
     name: string;
     description?: string;
     project_id: number;
-    retro_state?: RetroState;
+    state?: RetroState;
 }
 
 export enum RetroState {
     'noting', 'grouping', 'voting', 'discussions'
 }
 
-export interface Topic {
-    id?: number;
+export interface Topic extends TopicBody {
+    id: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface TopicBody extends ProjectType {
     name: string;
-    description: string;
+    description?: string;
     retro_id: number;
 }
 
@@ -120,10 +125,15 @@ export interface TopicCommentBody extends ProjectType {
     comment_id: number;
 }
 
-export interface Note {
-    id?: number;
+export interface Note extends NoteBody {
+    id: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface NoteBody extends ProjectType {
     title: string;
-    description: string;
+    description?: string;
     retro_id: number;
     topic_id?: number;
 }

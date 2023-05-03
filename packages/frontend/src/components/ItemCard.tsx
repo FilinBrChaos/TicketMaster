@@ -1,0 +1,58 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, Typography } from "@mui/material";
+import { palette } from '../context/ProjectThemeProvider';
+import { Delete, Help } from "@mui/icons-material";
+import { useRef, useState } from "react";
+
+interface ProjectCardProps {
+    title?: string;
+    description?: string;
+    onClick?: () => void;
+    onDeleteClick?: () => void;
+}
+
+export function ItemCard(props: ProjectCardProps): JSX.Element {
+    const [ openDeleteProjectDialog, setOpenDeleteProjectDialog ] = useState(false);
+    const [ popoverAnchor, setPopoverAnchor ] = useState<HTMLButtonElement | null>(null);
+
+    const popoverEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setPopoverAnchor(e.currentTarget);
+    }
+
+    let title = props.title ? props.title : 'Project';
+    let description = props.description ? props.description : 'No description'
+
+    const openPopover = Boolean(popoverAnchor);
+    const popoverId = openPopover ? 'simple-popover' : undefined;
+
+    return (
+        <div className="flex flex-col-reverse justify-between items-end p-3 w-[90%] h-52 rounded-lg bg-slate-200">
+            <div className="flex flex-row items-center justify-between w-full cursor-pointer">
+                <Typography sx={{ color: palette.background.default, fontSize: 28 }} onClick={props.onClick}>{title}</Typography>
+                <IconButton sx={{ width: 30, height: 30 }} onClick={() => { setOpenDeleteProjectDialog(true) }}><Delete /></IconButton>
+            </div>
+            <IconButton onClick={popoverEnter} aria-describedby={popoverId}><Help /></IconButton>
+            <Popover 
+                id={popoverId}
+                open={openPopover} 
+                anchorEl={popoverAnchor} 
+                onClose={() => { setPopoverAnchor(null) }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                    <div className="flex w-96 p-3">
+                        {description}
+                    </div>
+            </Popover>
+
+            <Dialog open={openDeleteProjectDialog}>
+                <DialogTitle>Conformation</DialogTitle>
+                <DialogContent>Once you delete project this action can't be undone</DialogContent>
+                <DialogActions>
+                    <Button variant='contained' color='error' onClick={() => { 
+                        setOpenDeleteProjectDialog(false);
+                        if (props.onDeleteClick) props.onDeleteClick()
+                    }}>Delete</Button>
+                    <Button onClick={() => { setOpenDeleteProjectDialog(false) }}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    )
+}

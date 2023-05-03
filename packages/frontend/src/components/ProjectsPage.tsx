@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useProjectContext } from '../context/ProjectContext';
 import { BaseHeader } from './BaseHeader';
-import { ProjectCard } from './ProjectCard';
+import { ItemCard } from './ItemCard';
 import { LoadingPage } from './LoadingPage';
 import { v4 } from 'uuid';
-import { CreateProjectCard } from './CreateProjectCard';
+import { CreateItemCard } from './CreateItemCard';
 import { useNavigate } from 'react-router-dom';
 import { Project, ProjectBody } from '../../../proj-api/dist/lib/projectTypes';
 
@@ -47,13 +47,14 @@ export default function ProjectsPage(props: ProjectsPageProps): JSX.Element {
                 <div className=" w-full grid grid-cols-3 gap-y-8 justify-items-center">
                     {projectsList.length > 0 ? 
                     projectsList.map((project) => 
-                        <ProjectCard 
+                        <ItemCard 
                             title={project.name}
+                            description={project.description}
                             onClick={() => { onProjectCardClickHandler(project.id) }}
                             onDeleteClick={() => { deleteProjectHandler(project.id) }}
-                            key={v4()}></ProjectCard>) :
+                            key={v4()}></ItemCard>) :
                         null}
-                    <CreateProjectCard onDialogCreateClick={createProjectButtonHandler} />
+                    <CreateItemCard onDialogCreateClick={createProjectButtonHandler} />
                 </div>
             </div>
         </div>

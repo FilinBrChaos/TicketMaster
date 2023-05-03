@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody, Retro, RetroBody } from '../../../lib/projectTypes';
+import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody, Retro, RetroBody, Note, NoteBody, Topic, TopicBody } from '../../../lib/projectTypes';
 
 
 interface APIClient {
@@ -36,6 +36,16 @@ interface APIClient {
     getRetro: (retroId: number) => Promise<Retro>;
     createRetro: (retro: RetroBody) => Promise<number>;
     deleteRetro: (retroId: number) => Promise<number>;
+
+    getNotes: (retroId: number) => Promise<Note[]>;
+    getNote: (noteId: number) => Promise<Note>;
+    createNote: (note: NoteBody) => Promise<number>;
+    deleteNote: (noteId: number) => Promise<number>;
+
+    getTopics: (retroId: number) => Promise<Topic[]>;
+    getTopic: (topicId: number) => Promise<Topic>;
+    createTopic: (topic: TopicBody) => Promise<number>;
+    deleteTopic: (topicId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
@@ -131,6 +141,30 @@ const ProjectContext = createContext<ProjectContextProps>({
         deleteRetro: async () => {
             throw Error('not implemented')
         },
+        getNotes: async () => {
+            throw Error('not implemented')
+        },
+        getNote: async () => {
+            throw Error('not implemented')
+        },
+        createNote: async () => {
+            throw Error('not implemented')
+        },
+        deleteNote: async () => {
+            throw Error('not implemented')
+        },
+        getTopics: async () => {
+            throw Error('not implemented')
+        },
+        getTopic: async () => {
+            throw Error('not implemented')
+        },
+        createTopic: async () => {
+            throw Error('not implemented')
+        },
+        deleteTopic: async () => {
+            throw Error('not implemented')
+        }
     },
     userId: null,
     projectId: null,
@@ -469,6 +503,87 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const getNotes = async (retroId: number): Promise<Note[]> => {
+            const response = await getRequest(`/notes/${retroId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.notes;
+            } else {
+                throw json;
+            }
+        }
+
+        const getNote = async (noteId: number): Promise<Note> => {
+            const response = await getRequest(`/note/${noteId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.note;
+            } else {
+                throw json;
+            }
+        }
+
+        const createNote = async (note: NoteBody): Promise<number> => {
+            const response = await postRequest(`/notes`, JSON.stringify(note));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const deleteNote = async (noteId: number): Promise<number> => {
+            const response = await deleteRequest(`/notes/${noteId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const getTopics = async (retroId: number): Promise<Topic[]> => {
+            const response = await getRequest(`/topics/${retroId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.topics;
+            } else {
+                throw json;
+            }
+        }
+
+        const getTopic = async (topicId: number): Promise<Topic> => {
+            const response = await getRequest(`/topic/${topicId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.topic;
+            } else {
+                throw json;
+            }
+        }
+
+        const createTopic = async (topic: TopicBody): Promise<number> => {
+            const response = await postRequest(`/topics`, JSON.stringify(topic));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const deleteTopic = async (topicId: number): Promise<number> => {
+            const response = await deleteRequest(`/topics/${topicId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+
         return{
             getUsers,
             getUser,
@@ -496,7 +611,15 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getRetros,
             getRetro,
             createRetro,
-            deleteRetro
+            deleteRetro,
+            getNotes,
+            getNote,
+            createNote,
+            deleteNote,
+            getTopics,
+            getTopic,
+            createTopic,
+            deleteTopic
         }
     }, []);
 
