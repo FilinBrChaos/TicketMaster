@@ -26,10 +26,9 @@ CREATE TABLE "ticket" (
   id bigserial PRIMARY KEY,
   name VARCHAR NOT NULL,
   description VARCHAR,
-  state ticket_state,
+  state ticket_state default 'Open',
   created_at timestamp with time zone NOT NULL default current_timestamp,
   updated_at timestamp with time zone NOT NULL default current_timestamp,
-  assigned_user_id int,
   project_id bigserial,
   topic_id int,
   CONSTRAINT fk_project_id

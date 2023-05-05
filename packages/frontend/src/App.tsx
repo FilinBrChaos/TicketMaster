@@ -11,6 +11,7 @@ import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RetroLoader } from './pages/projects/project/retros/index';
 import { RetroPage } from './components/RetroPage';
+import { TopicLoader } from './pages/projects/project/retro/topic/topic';
 
 function App() {
   const { apiClient, getProject } = useProjectContext();
@@ -92,7 +93,17 @@ function App() {
                   notes: apiClient.getNotes(retroId), 
                   topics: apiClient.getTopics(retroId) 
                 });
-              }
+              },
+              children: [
+                {
+                  path: 'topics/:topicId',
+                  element: <TopicLoader />,
+                  loader: async (args: LoaderFunctionArgs) => {
+                    if (!args.params.topicId) throw Error('topicId is not present in params');
+                    return defer({ topic: apiClient.getTopic(Number(args.params.topicId)) });
+                  }
+                }
+              ]
             }
           ]
         },

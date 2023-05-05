@@ -29,13 +29,26 @@ export const LabelsPage = (props: LabelsPageProps): JSX.Element => {
         })
     }
 
+    const deleteLabelHandler = (labelId: number) => {
+        context.apiClient.deleteLabel(labelId).then(() => {
+            context.apiClient.getLabels(context.getProject()).then((res) => {
+                setLabels(res)
+            })
+        })
+    }
+
     if (props.loading) return <LoadingPage></LoadingPage>
     return (
         <div className="flex flex-col items-center h-screen">
             <UnderlineProjHeader title='todo'></UnderlineProjHeader>
             <div className="flex flex-col items-center justify-center h-[86%] w-[70%] mt-[2%]">
                 <div className='flex flex-col items-center justify-center'>
-                    { labels && labels.map(label => <LabelCard key={v4()} label={label} onDeleteClick={() => {}}></LabelCard>) }
+                    { labels && labels.map(label => <div className='mb-3'>
+                                <LabelCard 
+                                    key={v4()} 
+                                    label={label} 
+                                    onDeleteClick={() => { deleteLabelHandler(label.id) }}></LabelCard>
+                                </div>) }
                 </div>
                 <CreateLabelDialog onCreateButtonClick={createLabelHandler} ></CreateLabelDialog>
             </div>

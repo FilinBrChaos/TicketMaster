@@ -20,9 +20,7 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
             name: body.name,
             project_id: body.project_id,
             description: body.description,
-            assigned_user_id: body.assigned_user_id,
-            topic_id: body.topicId,
-            
+            topic_id: body.topicId
         }
 
         const result = await createRecord(pool, 'ticket', ticket)

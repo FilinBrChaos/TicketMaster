@@ -1,30 +1,14 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useState } from 'react';
-import { useProjectContext } from '../context/ProjectContext';
-import { TicketBody } from '../../../proj-api/dist/lib/projectTypes';
-import { toast } from 'react-toastify';
 
 interface CreateTicketDialogProps {
-    onTicketCreate?: () => void;
+    onCreateButtonClick?: (name: string, description: string) => void;
 }
 
 export const CreateTicketDialog = (props: CreateTicketDialogProps): JSX.Element => {
-    const context = useProjectContext();
     const [ openDialog, setOpenDialog ] = useState(false);
     const [ ticketName, setTicketName ] = useState('');
     const [ ticketDescription, setTicketDescription ] = useState('');
-
-    const createTicketHandler = () => {
-        if (!ticketName || ticketName === '') { console.log('here'); toast.error('Ticket name cannot be empty'); return; }
-        const ticket: TicketBody = { 
-            project_id: context.getProject(),
-            description: ticketDescription,
-            name: ticketName
-        }
-        context.apiClient.createTicket(ticket).then(() => {
-            if (props.onTicketCreate) props.onTicketCreate();
-        })
-    }
 
     return (
         <div>
@@ -42,7 +26,10 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps): JSX.Element 
                         onChange={(e) => { setTicketDescription(e.target.value) }} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={createTicketHandler}>create</Button>
+                    <Button variant="contained" onClick={() => {
+                        setOpenDialog(false);
+                        if (props.onCreateButtonClick) props.onCreateButtonClick(ticketName, ticketDescription);
+                    }}>create</Button>
                     <Button onClick={() => { setOpenDialog(false) }}>cancel</Button>
                 </DialogActions>
             </Dialog>

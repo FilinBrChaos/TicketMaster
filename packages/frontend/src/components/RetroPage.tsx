@@ -3,9 +3,9 @@ import { UnderlineProjHeader } from './UnderlineProjHeader';
 import { RetroTabsSelector } from './RetroTabsSelector';
 import { RetroTopicsTab } from './RetroTopicsTab';
 import { RetroNotesTab } from './RetroNotesTab';
-import { Note, Retro } from '../../../lib/projectTypes';
+import { Note, Retro, Topic } from '../../../lib/projectTypes';
 export const RetroPage = (): JSX.Element => {
-    const data = useLoaderData() as { retro: Retro, notes: Note[] };
+    const data = useLoaderData() as { retro: Retro, notes: Note[], topics: Topic[] };
     const [ pathSearchParams ] = useSearchParams();
     const currentTab = pathSearchParams.get('tab');
 
@@ -16,7 +16,7 @@ export const RetroPage = (): JSX.Element => {
 
             <div className="h-[84%] w-[70%] mt-[2%]">
                 {currentTab === 'topics' ? 
-                    <RetroTopicsTab />
+                    <RetroTopicsTab topics={data.topics} />
                     :
                     <RetroNotesTab notes={ data.notes } />
                 }

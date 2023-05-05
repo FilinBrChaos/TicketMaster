@@ -51,7 +51,8 @@ export const RetroNotesTab = (props: RetroNotesTabProps): JSX.Element => {
                         title={note.title} 
                         description={note.description}
                         onDeleteClick={() => { deleteNoteHandler(note.id) }}
-                        onClick={() => { navigate('note/' + note.id) }}></ItemCard>) 
+                        //onClick={() => { navigate('note/' + note.id) }}
+                        ></ItemCard>) 
                 :
                 null
             }

@@ -9,19 +9,11 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
     const queryParams = event.queryStringParameters;
 
     if (!queryParams) throw { message: 'query params must be present' }
-    if (!queryParams.ticket_id) throw { message: '"ticket_id" must be present in request params' }
+    if (!queryParams.ticket_id || !queryParams.label_id) throw { message: '"ticket_id" and "label_id" params must be present in request params' }
 
-    let dbOut = await pool.query(`SELECT 
-        U.id, 
-        U.name, 
-        U.color 
-      FROM 
-        "user" U
-      LEFT JOIN "assigned_user" AU 
-        ON U.id = AU.user_id AND AU.ticket_id=${queryParams.ticket_id}
-      WHERE AU.id is null`);
+    const dbOut = await pool.query(`DELETE FROM "ticket_label" WHERE ticket_id=${queryParams.ticket_id} AND label_id=${queryParams.label_id} RETURNING id`);
 
-    return lambdaResponse(200, { unAssignedUsers: dbOut?.rows });
+    return lambdaResponse(200, { id: dbOut.rows[0] });
   } catch (e) {
     return lambdaResponse(500, { error: JSON.stringify(e) });
   }

@@ -35,9 +35,12 @@ export function CreateItemCard(props: ItemCardProps): JSX.Element {
                     <Button onClick={() => { 
                         setOpenCreateProjectDialog(false);
                         if (props.onDialogCreateClick) 
-                            props.onDialogCreateClick(dialogProjectName, dialogProjectDescription) 
+                            props.onDialogCreateClick(dialogProjectName, dialogProjectDescription);
+                        setDialogProjectDescription('');
                     }}>Create</Button>
-                    <Button onClick={() => { setOpenCreateProjectDialog(false) }}>Cancel</Button>
+                    <Button onClick={() => { 
+                        setDialogProjectDescription(''); 
+                        setOpenCreateProjectDialog(false) }}>Cancel</Button>
                 </DialogActions>
             </Dialog>
         </div>

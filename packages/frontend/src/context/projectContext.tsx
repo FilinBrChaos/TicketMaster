@@ -46,6 +46,11 @@ interface APIClient {
     getTopic: (topicId: number) => Promise<Topic>;
     createTopic: (topic: TopicBody) => Promise<number>;
     deleteTopic: (topicId: number) => Promise<number>;
+
+    addLabelsToTicket: (ticketId: number, labelsIds: number[]) => Promise<void>;
+    getTicketLabels: (ticketId: number) => Promise<Label[]>;
+    getNotTicketLabels: (ticketId: number) => Promise<Label[]>;
+    removeLabelFromTicket: (ticketId: number, labelId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
@@ -163,6 +168,18 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         deleteTopic: async () => {
+            throw Error('not implemented')
+        },
+        addLabelsToTicket: async () => {
+            throw Error('not implemented')
+        },
+        getTicketLabels: async () => {
+            throw Error('not implemented')
+        },
+        getNotTicketLabels: async () => {
+            throw Error('not implemented')
+        },
+        removeLabelFromTicket: async () => {
             throw Error('not implemented')
         }
     },
@@ -447,7 +464,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             const response = await getRequest(`/unassign-users?ticket_id=${ticketId}`);
             const json = await response.json();
             if (response.ok) {
-                return json.assignedUsers;
+                return json.unAssignedUsers;
             } else {
                 throw json;
             }
@@ -583,7 +600,47 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
+        const addLabelsToTicket = async (ticketId: number, labelsIds: number[]): Promise<void> => {
+            const postObj = {
+                ticketsLabels: labelsIds.map((labelId) => { return { label_id: labelId, ticket_id: ticketId } })
+            }
+            const response = await postRequest(`/add-labels-to-ticket`, JSON.stringify(postObj));
+            const json = await response.json();
+            if (!response.ok) {
+                throw json;
+            }
+        };
 
+        const getTicketLabels = async (ticketId: number): Promise<Label[]> => {
+            const response = await getRequest(`/ticket-labels?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.labels;
+            } else {
+                throw json;
+            }
+        };
+
+        const getNotTicketLabels = async (ticketId: number): Promise<Label[]> => {
+            const response = await getRequest(`/not-ticket-labels?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.labels;
+            } else {
+                throw json;
+            }
+        };
+
+        const removeLabelFromTicket = async (ticketId: number, labelId: number): Promise<number> => {
+            const response = await deleteRequest(`/remove-label-from-ticket?ticket_id=${ticketId}&label_id=${labelId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        };
+    
         return{
             getUsers,
             getUser,
@@ -619,7 +676,11 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getTopics,
             getTopic,
             createTopic,
-            deleteTopic
+            deleteTopic,
+            getTicketLabels,
+            getNotTicketLabels,
+            addLabelsToTicket,
+            removeLabelFromTicket
         }
     }, []);
 
