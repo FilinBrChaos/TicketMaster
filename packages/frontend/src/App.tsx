@@ -44,12 +44,7 @@ function App() {
           loader: async (args: LoaderFunctionArgs) => {
             const id = args.params.id;
             if (!id) throw Error('project id is not present in path parameters');
-            const response = Promise.all([
-              apiClient.getProject(id ? Number(id) : 0).then((res) => res),
-              apiClient.getTickets(id ? Number(id) : 0).then((res) => res)
-            ])
-            const [project, tickets] = await response;
-            return defer({ project, tickets });
+            return defer({ project: apiClient.getProject(Number(id)) })
           },
           children: [
             {

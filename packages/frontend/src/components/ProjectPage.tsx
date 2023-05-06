@@ -14,13 +14,12 @@ import { toast } from "react-toastify";
 
 interface ProjectPageProps {
     project?: Project;
-    tickets?: Ticket[];
     loading: boolean;
 }
 
 export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
     const [ openFiltersDialog, setOpenFiltersDialog ] = useState(false);
-    const [ tickets, setTickets ] = useState(props.tickets);
+    const [ tickets, setTickets ] = useState<Ticket[]>([]);
     const location = useLocation();
     const context = useProjectContext();
     context.setProject(Number(location.pathname.split('/')[2]));

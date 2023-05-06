@@ -7,11 +7,15 @@ const pool = setupApiPool();
 export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   try {
     const params = event.queryStringParameters;
-    console.log('query params ' + JSON.stringify(params));
-    
     const projectId = parseRequestString(event);
+    let additional = '';
 
-    const result = await pool.query(`SELECT * FROM "ticket" where project_id=${projectId}`);
+    if (params && params.status) {
+      if (params.status === 'Closed') additional += 'AND status=Closed';
+      else additional += 'AND status=Open';
+    }
+
+    const result = await pool.query(`SELECT * FROM "ticket" where project_id=${projectId} ${additional}`);
 
     return lambdaResponse(200, { tickets: result.rows });
   } catch (e) {

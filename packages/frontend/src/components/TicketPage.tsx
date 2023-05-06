@@ -22,7 +22,7 @@ interface TicketPageProps {
 export const TicketPage = (props: TicketPageProps): JSX.Element => {
     const context = useProjectContext();
     const [ comments, setComments ] = useState<Comment[]>();
-    const [ ticket ] = useState(props.ticket);
+    const [ ticket, setTicket ] = useState(props.ticket);
     const [ unassignedUsers, setUnassignedUsers ] = useState<User[]>([]);
     const [ assignedUsers, setAssignedUsers ] = useState<User[]>([]);
     const [ ticketLabels, setTicketLabels ] = useState<Label[]>([]);
@@ -109,6 +109,14 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
         })
     }
 
+    const changeTicketStatusHandler = (newStatus: 'Open' | 'Closed') => {
+        context.apiClient.changeTicketStatus(ticket.id, newStatus).then(() => {
+            context.apiClient.getTicket(ticket.id).then((res) => {
+                setTicket(res);
+            })
+        })
+    }
+
     return (
         <div className="flex flex-col items-center h-screen w-screen overflow-x-hidden">
             <UnderlineProjHeader title={props.ticket.name}></UnderlineProjHeader>
@@ -190,9 +198,9 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
                         <Typography sx={{ mr: 2 }}>Status:</Typography>
                         
                         {ticket.state && ticket.state.toString() === 'Closed' ? 
-                            <div className='flex flex-row border rounded-lg text-[black]'>
-                                <CheckCircleOutline />
-                                <Typography>Open</Typography>
+                            <div className='flex flex-row border rounded-full p-1'>
+                                <CheckCircleOutline sx={{ color: 'rgb(141, 103, 217)' }} />
+                                <Typography sx={{ ml: 1, mr: 1 }}>Closed</Typography>
                             </div>
                             :
                             <div className='flex flex-row border rounded-full p-1'>
@@ -201,7 +209,12 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
                             </div> 
                         }
 
-                        <Button variant="contained" sx={{ ml: 2 }}>Change</Button>
+                        <Button variant="contained" 
+                                sx={{ ml: 2 }} 
+                                onClick={() => {
+                                    console.log(ticket.state?.toString())
+                                    changeTicketStatusHandler(ticket.state?.toString() === 'Closed' ? 'Open' : 'Closed') 
+                                }}>Change</Button>
                     </div>
                     <div className=" py-4 border-b">
                         <Typography>Topic</Typography>

@@ -18,7 +18,7 @@ export const TicketCard = ({ ticket }: TicketCardProps): JSX.Element => {
                 <div className="mr-3">
                     { ticket.state && ticket.state.toString() === 'Closed' ? 
                         <div>
-                            <CheckCircleOutline />
+                            <CheckCircleOutline sx={{ color: 'rgb(141, 103, 217)' }} />
                         </div>
                         :
                         <div>

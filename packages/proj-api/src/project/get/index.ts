@@ -8,6 +8,8 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
   try {
     const projectId = parseRequestString(event);
 
+    console.log('project get one project id param ' + projectId);
+
     const dbOut = await pool.query(`SELECT * FROM "project" where id=${projectId}`);
 
     return lambdaResponse(200, { project: dbOut.rows[0] });

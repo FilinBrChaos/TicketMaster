@@ -68,7 +68,10 @@ export interface TicketCommentBody extends ProjectType {
 }
 
 export interface TicketLabel {
-    id?: number;
+    id: number;
+}
+
+export interface TicketLabelBody {
     ticket_id: number;
     label_id: number;
 }

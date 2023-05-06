@@ -17,6 +17,7 @@ interface APIClient {
     getTicket: (ticketId: number) => Promise<Ticket>;
     createTicket: (ticket: TicketBody) => Promise<number>;
     deleteTicket: (ticketId: number) => Promise<number>;
+    changeTicketStatus: (ticketId: number, newStatus: 'Open' | 'Closed') => Promise<number>;
     updateTicket: (ticketId: number, ticket: TicketBody) => Promise<number>;
 
     getLabels: (projectId: number, queryParams?: string) => Promise<Label[]>;
@@ -96,6 +97,9 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         createTicket: async () => {
+            throw Error('not implemented')
+        },
+        changeTicketStatus: async () => {
             throw Error('not implemented')
         },
         deleteTicket: async () => {
@@ -328,7 +332,6 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         const getTickets = async (projectId: number, queryParams?: any): Promise<Ticket[]> => {
             const response = await getRequest(`/tickets/${projectId}`);
             const json = await response.json();
-            console.log(JSON.stringify(json));
             if (response.ok) {
                 return json.tickets;
             } else {
@@ -347,8 +350,17 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
         }
 
         const createTicket = async (ticket: TicketBody): Promise<number> => {
-            console.log(JSON.stringify(ticket));
             const response = await postRequest(`/tickets`, JSON.stringify(ticket));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const changeTicketStatus = async (ticketId: number, newStatus: 'Open' | 'Closed'): Promise<number> => {
+            const response = await postRequest(`/ticket-update-status?ticket_id=${ticketId}`, JSON.stringify({ status: newStatus }));
             const json = await response.json();
             if (response.ok) {
                 return json.id;
@@ -653,6 +665,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getTickets,
             getTicket,
             createTicket,
+            changeTicketStatus,
             deleteTicket,
             updateTicket,
             getLabels,
