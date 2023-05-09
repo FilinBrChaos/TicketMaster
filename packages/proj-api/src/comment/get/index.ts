@@ -28,9 +28,18 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
       WHERE C.id=TC.comment_id AND TC.ticket_id=${queryParams.ticket_id} AND U.id=C.user_id`);
 
     if (queryParams.topic_id)
-      dbOut = await pool.query(`SELECT * FROM
-      "comment" C, "topic_comment" TC 
-      WHERE C.id=TC.comment_id AND TC.topic_ic=${queryParams.topic_id}`)
+      dbOut = await pool.query(`SELECT 
+      U.name as "user_name", 
+      U.color as "user_color", 
+      C.id, 
+      C.user_id, 
+      C.project_id, 
+      C.comment, 
+      C.created_at, 
+      C.updated_at 
+    FROM 
+      "comment" C, "topic_comment" TC, "user" U 
+    WHERE C.id=TC.comment_id AND TC.topic_id=${queryParams.topic_id} AND U.id=C.user_id`)
 
     
 

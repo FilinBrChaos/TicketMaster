@@ -3,7 +3,7 @@ import { RetrosPage } from '../../../../components/RetrosPage';
 import { Retro } from '../../../../../../lib/projectTypes';
 
 
-export const RetroLoader = (): JSX.Element => {
+export const RetrosLoader = (): JSX.Element => {
     const retros = useLoaderData() as { retros: Retro[] };
 
     return (

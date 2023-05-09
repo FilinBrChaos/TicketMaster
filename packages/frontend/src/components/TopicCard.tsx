@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, Typography, Box } from '@mui/material';
 import { palette } from '../context/ProjectThemeProvider';
-import { Delete, Help } from "@mui/icons-material";
-import { useRef, useState } from "react";
+import { Delete, Help, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { useState } from "react";
 
-interface ProjectCardProps {
+interface TopicCardProps {
     title?: string;
     color?: string;
     description?: string;
@@ -11,7 +11,7 @@ interface ProjectCardProps {
     onDeleteClick?: () => void;
 }
 
-export function ItemCard(props: ProjectCardProps): JSX.Element {
+export function TopicCard(props: TopicCardProps): JSX.Element {
     const [ openDeleteProjectDialog, setOpenDeleteProjectDialog ] = useState(false);
     const [ popoverAnchor, setPopoverAnchor ] = useState<HTMLButtonElement | null>(null);
     const cardColor = props.color && props.color !== '' ? props.color : 'rgb(241, 245, 249)';
@@ -28,11 +28,18 @@ export function ItemCard(props: ProjectCardProps): JSX.Element {
 
     return (
         <Box className="flex flex-col-reverse justify-between items-end p-3 w-[90%] h-52 rounded-lg " sx={{ backgroundColor: cardColor }}>
-            <div className="flex flex-row items-center justify-between w-full cursor-pointer">
+            <div className="flex flex-row items-center justify-between w-full cursor-pointer bg">
                 <Typography sx={{ color: palette.background.default, fontSize: 28 }} onClick={props.onClick}>{title}</Typography>
                 <IconButton sx={{ width: 30, height: 30 }} onClick={() => { setOpenDeleteProjectDialog(true) }}><Delete /></IconButton>
             </div>
-            <IconButton onClick={popoverEnter} aria-describedby={popoverId}><Help /></IconButton>
+            <div className='flex flex-row justify-between items-start w-full'>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: palette.text.secondary }}>
+                    <KeyboardArrowUp />
+                    12
+                    <KeyboardArrowDown />
+                </Box>
+                <IconButton onClick={popoverEnter} aria-describedby={popoverId}><Help /></IconButton>
+            </div>
             <Popover 
                 id={popoverId}
                 open={openPopover} 

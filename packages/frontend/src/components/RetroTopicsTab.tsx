@@ -5,6 +5,7 @@ import { useProjectContext } from "../context/ProjectContext";
 import { CreateItemCard } from "./CreateItemCard";
 import { ItemCard } from "./ItemCard";
 import { Topic, TopicBody } from "../../../lib/projectTypes";
+import { TopicCard } from './TopicCard';
 
 interface RetroTopicsTabProps {
     topics: Topic[];
@@ -46,12 +47,12 @@ export const RetroTopicsTab = (props: RetroTopicsTabProps): JSX.Element => {
     return (
         <div className=" w-full grid grid-cols-3 gap-y-8 justify-items-center">
             {topics.length > 0 ? topics.map((topic) => 
-                    <ItemCard 
+                    <TopicCard 
                         key={v4()}
                         title={topic.name} 
                         description={topic.description}
                         onDeleteClick={() => { deleteTopicHandler(topic.id) }}
-                        onClick={() => { navigate('topic/' + topic.id) }}></ItemCard>) 
+                        onClick={() => { navigate('topics/' + topic.id) }}></TopicCard>) 
                 :
                 null
             }

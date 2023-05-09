@@ -28,6 +28,9 @@ interface APIClient {
     commentTicket: (ticketId: number, comment: CommentBody) => Promise<number>;
     getTicketComments: (ticketId: number) => Promise<Comment[]>;
 
+    commentTopic: (topicId: number, comment: CommentBody) => Promise<number>;
+    getTopicComments: (topicId: number) => Promise<Comment[]>;
+
     assignUsersToTicket: (ticketId: number, usersIds: number[]) => Promise<void>;
     getAssignedUsers: (ticketId: number) => Promise<User[]>;
     getUnassignedUsers: (ticketId: number) => Promise<User[]>;
@@ -50,7 +53,7 @@ interface APIClient {
 
     addLabelsToTicket: (ticketId: number, labelsIds: number[]) => Promise<void>;
     getTicketLabels: (ticketId: number) => Promise<Label[]>;
-    getNotTicketLabels: (ticketId: number) => Promise<Label[]>;
+    getNotTicketLabels: (ticketId: number, projectId: number) => Promise<Label[]>;
     removeLabelFromTicket: (ticketId: number, labelId: number) => Promise<number>;
 }
 
@@ -124,6 +127,12 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         getTicketComments: async () => {
+            throw Error('not implemented')
+        },
+        commentTopic: async () => {
+            throw Error('not implemented')
+        },
+        getTopicComments: async () => {
             throw Error('not implemented')
         },
         assignUsersToTicket: async () => {
@@ -329,8 +338,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         }
 
-        const getTickets = async (projectId: number, queryParams?: any): Promise<Ticket[]> => {
-            const response = await getRequest(`/tickets/${projectId}`);
+        const getTickets = async (projectId: number, queryParams?: string): Promise<Ticket[]> => {
+            const response = await getRequest(`/tickets/${projectId}${queryParams ? queryParams : ''}`);
             const json = await response.json();
             if (response.ok) {
                 return json.tickets;
@@ -443,6 +452,26 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
 
         const getTicketComments = async (ticketId: number): Promise<Comment[]> => {
             const response = await getRequest(`/comments?ticket_id=${ticketId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.comments;
+            } else {
+                throw json;
+            }
+        }
+
+        const commentTopic = async (topicId: number, comment: CommentBody): Promise<number> => {
+            const response = await postRequest(`/comments?topic_id=${topicId}`, JSON.stringify(comment));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        }
+
+        const getTopicComments = async (topicId: number): Promise<Comment[]> => {
+            const response = await getRequest(`/comments?topic_id=${topicId}`);
             const json = await response.json();
             if (response.ok) {
                 return json.comments;
@@ -633,8 +662,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         };
 
-        const getNotTicketLabels = async (ticketId: number): Promise<Label[]> => {
-            const response = await getRequest(`/not-ticket-labels?ticket_id=${ticketId}`);
+        const getNotTicketLabels = async (ticketId: number, projectId: number): Promise<Label[]> => {
+            const response = await getRequest(`/not-ticket-labels?ticket_id=${ticketId}&project_id=${projectId}`);
             const json = await response.json();
             if (response.ok) {
                 return json.labels;
@@ -674,6 +703,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             deleteLabel,
             commentTicket,
             getTicketComments,
+            commentTopic,
+            getTopicComments,
             assignUsersToTicket,
             getAssignedUsers,
             getUnassignedUsers,

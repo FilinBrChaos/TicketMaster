@@ -11,8 +11,8 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
     let additional = '';
 
     if (params && params.status) {
-      if (params.status === 'Closed') additional += 'AND status=Closed';
-      else additional += 'AND status=Open';
+      if (params.status === 'Closed') additional += "AND state='Closed'";
+      else additional += "AND state='Open'";
     }
 
     const result = await pool.query(`SELECT * FROM "ticket" where project_id=${projectId} ${additional}`);

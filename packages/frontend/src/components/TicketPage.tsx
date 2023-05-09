@@ -44,7 +44,7 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
         context.apiClient.getTicketLabels(ticket.id).then((res) => {
             setTicketLabels(res);
         })
-        context.apiClient.getNotTicketLabels(ticket.id).then((res) => {
+        context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
             setNotTicketLabels(res);
         })
     }, []);
@@ -76,7 +76,7 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
             context.apiClient.getTicketLabels(ticket.id).then((res) => {
                 setTicketLabels(res);
             })
-            context.apiClient.getNotTicketLabels(ticket.id).then((res) => {
+            context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
                 setNotTicketLabels(res);
             })    
         })
@@ -87,7 +87,7 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
             context.apiClient.getTicketLabels(ticket.id).then((res) => {
                 setTicketLabels(res);
             })
-            context.apiClient.getNotTicketLabels(ticket.id).then((res) => {
+            context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
                 setNotTicketLabels(res);
             })    
         })

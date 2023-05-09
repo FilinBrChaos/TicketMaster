@@ -1,9 +1,9 @@
 import { LoadingPage } from "./LoadingPage";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext';
 import { UnderlineProjHeader } from "./UnderlineProjHeader";
 import { Box, Button, Dialog, IconButton, Typography, DialogTitle, DialogActions, DialogContent, Checkbox } from '@mui/material';
-import { Sort } from "@mui/icons-material";
+import { ArrowDropDown, North, Sort } from "@mui/icons-material";
 import { TicketCard } from "./TicketCard";
 import { palette } from '../context/ProjectThemeProvider';
 import { useEffect, useState } from 'react';
@@ -20,15 +20,17 @@ interface ProjectPageProps {
 export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
     const [ openFiltersDialog, setOpenFiltersDialog ] = useState(false);
     const [ tickets, setTickets ] = useState<Ticket[]>([]);
+    const [ searchParams ] = useSearchParams();
+    const navigate = useNavigate();
     const location = useLocation();
     const context = useProjectContext();
     context.setProject(Number(location.pathname.split('/')[2]));
 
     useEffect(() => {
-        context.apiClient.getTickets(context.getProject()).then((res) => {
+        context.apiClient.getTickets(context.getProject(), `?status=${getPageSortParams(searchParams).ticketsStatus}`).then((res) => {
             setTickets(res);
         });
-    }, []);
+    }, [searchParams]);
 
     const createTicketHandler = (ticketName: string, ticketDescription: string) => {
         if (!ticketName || ticketName === '') { toast.error('Ticket name cannot be empty'); return; }
@@ -54,10 +56,17 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
                     <CreateTicketDialog onCreateButtonClick={createTicketHandler}></CreateTicketDialog>
                 </div>
                 <Box className={`flex flex-col max-h-[93%] rounded-lg overflow-hidden`}>
-                    <Box className="flex flex-row items-center pl-4 h-[40px]" sx={{ backgroundColor: palette.secondary.light }}>
-                        <Typography>Opened</Typography>
-                        <Typography sx={{ pl: 3 }}>Closed</Typography>
+                    <Box className="flex flex-row items-center px-4 h-[40px] justify-between" sx={{ backgroundColor: palette.secondary.light }}>
+                        <div className="flex flex-row">
+                            <StatusSortButton button='Open'></StatusSortButton>
+                            <div className="pl-3">
+                                <StatusSortButton button='Closed'></StatusSortButton>
+                            </div>
+                        </div>
+                        <div onClick={() => { navigate('') }}>
 
+                        </div>
+                        <Typography>date<ArrowDropDown /></Typography>
                     </Box>
                     {tickets && tickets.map((ticket) => <TicketCard ticket={ticket} key={v4()}></TicketCard>)}
                     
@@ -75,4 +84,28 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
             </Dialog>
         </div>
     )
+}
+
+function StatusSortButton(props: { button: 'Open' | 'Closed' }): JSX.Element {
+    const [ searchParams ] = useSearchParams();
+    const navigate = useNavigate();
+
+    return (
+        <div onClick={() => { navigate('?status=' + props.button) }}>
+            <Box sx={{
+                    color: getPageSortParams(searchParams).ticketsStatus === props.button ? '' : palette.text.secondary,
+                    cursor: 'pointer'
+                }}>
+                <Typography>{props.button}</Typography>
+            </Box>
+        </div>
+    )
+}
+
+function getPageSortParams(params: URLSearchParams): { ticketsStatus: string } {
+    const ticketsStatus = params.get('status') === 'Closed' ? 'Closed' : 'Open';
+
+    return {
+        ticketsStatus: ticketsStatus
+    }
 }

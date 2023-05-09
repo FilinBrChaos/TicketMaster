@@ -1,15 +1,22 @@
-import { useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData, useLocation, useParams } from 'react-router-dom';
 import { RetrosPage } from '../../../../components/RetrosPage';
-import { Retro } from '../../../../../../lib/projectTypes';
+import { Note, Retro, Topic } from '../../../../../../lib/projectTypes';
 import React from 'react';
+import { RetroPage } from '../../../../components/RetroPage';
 
 
-export const RetrosLoader = (): JSX.Element => {
-    const retros = useLoaderData() as { retros: Retro[] };
+export const RetroLoader = (): JSX.Element => {
+    const data = useLoaderData() as { retro: Retro, notes: Note[], topics: Topic[] };
+    const { pathname } = useLocation();
+    const { id, retroId } = useParams();
 
     return (
         <div>
-            <RetrosPage retros={retros.retros}></RetrosPage>
+            {pathname === `/projects/${id}/retros/${retroId}` ?
+                <RetroPage topics={data.topics} notes={data.notes}></RetroPage>
+                :
+                <Outlet />
+            }
         </div>
     )
 }

@@ -4,8 +4,13 @@ import { RetroTabsSelector } from './RetroTabsSelector';
 import { RetroTopicsTab } from './RetroTopicsTab';
 import { RetroNotesTab } from './RetroNotesTab';
 import { Note, Retro, Topic } from '../../../lib/projectTypes';
-export const RetroPage = (): JSX.Element => {
-    const data = useLoaderData() as { retro: Retro, notes: Note[], topics: Topic[] };
+
+interface RetroPageProps {
+    topics: Topic[];
+    notes: Note[];
+}
+
+export const RetroPage = (props: RetroPageProps): JSX.Element => {
     const [ pathSearchParams ] = useSearchParams();
     const currentTab = pathSearchParams.get('tab');
 
@@ -16,9 +21,9 @@ export const RetroPage = (): JSX.Element => {
 
             <div className="h-[84%] w-[70%] mt-[2%]">
                 {currentTab === 'topics' ? 
-                    <RetroTopicsTab topics={data.topics} />
+                    <RetroTopicsTab topics={props.topics} />
                     :
-                    <RetroNotesTab notes={ data.notes } />
+                    <RetroNotesTab notes={ props.notes } />
                 }
             </div>
         </div>
