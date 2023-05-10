@@ -1,20 +1,19 @@
-import { Button, Typography, Box, TextField, IconButton } from '@mui/material';
+import { Typography, Box, TextField, IconButton } from '@mui/material';
 import { UnderlineProjHeader } from "./UnderlineProjHeader";
-import { UserCard } from "./UserCard";
 import { palette } from '../context/ProjectThemeProvider';
-import { Adjust, CheckCircleOutline, Send } from '@mui/icons-material';
+import { Send } from '@mui/icons-material';
 import { useProjectContext } from '../context/ProjectContext';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { CommentCard } from './CommentCard';
 import { v4 } from 'uuid';
 import { ChecklistDialog } from './ChecklistDialog';
-import { LabelCard } from './LabelCard';
-import { Ticket, User, Label, CommentBody, Comment, Topic, Note } from '../../../lib/projectTypes';
+import { CommentBody, Comment, Topic, Note, TicketBody, Ticket } from '../../../lib/projectTypes';
 import { LoadingPage } from './LoadingPage';
 import { ItemCard } from './ItemCard';
-import { CreateItemCard } from './CreateItemCard';
 import { TicketCard } from './TicketCard';
+import { useParams } from 'react-router-dom';
+import { CreateTicketDialog } from './CreateTicketDialog';
 
 interface TopicPageProps {
     topic: Topic;
@@ -25,58 +24,54 @@ export const TopicPage = (props: TopicPageProps): JSX.Element => {
     const context = useProjectContext();
     const [ comments, setComments ] = useState<Comment[]>();
     const [ topic ] = useState(props.topic);
+    const [ notes, setNotes ] = useState<Note[]>([]);
+    const [ notTopicNotes, setNotTopicNotes ] = useState<Note[]>([]);
     const [ commentText, setCommentText ] = useState('');
+    const [ assignedTickets, setAssignedTickets ] = useState<Ticket[]>([]);
     const topicDate = new Date(topic.created_at.replace(' ', 'T'));
+    const params = useParams();
 
     useEffect(() => {
         context.apiClient.getTopicComments(topic.id).then((res) => {
             setComments(res);
         })
+        context.apiClient.getNotTopicNotes(topic.id, Number(params.retroId)).then((res) => {
+            setNotTopicNotes(res)
+        })
+        context.apiClient.getTopicNotes(topic.id).then((res) => {
+            setNotes(res);
+        })
+        context.apiClient.getAssignedToTopicTicket(topic.id).then((res) => {
+            setAssignedTickets(res);
+            console.log(JSON.stringify(res))
+        })
     }, []);
 
-    // const assignUsersHandler = (usersIds: number[]) => {
-    //     context.apiClient.assignUsersToTicket(ticket.id, usersIds).then(() => {
-    //         context.apiClient.getAssignedUsers(ticket.id).then((res) => {
-    //             setAssignedUsers(res);
-    //         })
-    //         context.apiClient.getUnassignedUsers(ticket.id).then((res) => {
-    //             setUnassignedUsers(res);
-    //         })
-    //     })
-    // }
+    const addNotesToTopicHandler = (notesIds: number[]) => {
+        context.apiClient.addNotesToTopic(topic.id, notesIds).then(() => {
+            context.apiClient.getTopicNotes(topic.id).then((res) => {
+                setNotes(res);
+            })
+            context.apiClient.getNotTopicNotes(topic.id, context.getProject()).then((res) => {
+                setNotTopicNotes(res);
+            })    
+        })
+    }
 
-    // const unassignUserHandler = (userId: number) => {
-    //     context.apiClient.unassignUserFromTicket(ticket.id, userId).then(() => {
-    //         context.apiClient.getAssignedUsers(ticket.id).then((res) => {
-    //             setAssignedUsers(res);
-    //         })
-    //         context.apiClient.getUnassignedUsers(ticket.id).then((res) => {
-    //             setUnassignedUsers(res);
-    //         })
-    //     })
-    // }
-
-    // const addLabelsToTicketHandler = (labelsIds: number[]) => {
-    //     context.apiClient.addLabelsToTicket(ticket.id, labelsIds).then(() => {
-    //         context.apiClient.getTicketLabels(ticket.id).then((res) => {
-    //             setTicketLabels(res);
-    //         })
-    //         context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
-    //             setNotTicketLabels(res);
-    //         })    
-    //     })
-    // }
-
-    // const removeLabelFromTicketHandler = (labelId: number) => {
-    //     context.apiClient.removeLabelFromTicket(ticket.id, labelId).then(() => {
-    //         context.apiClient.getTicketLabels(ticket.id).then((res) => {
-    //             setTicketLabels(res);
-    //         })
-    //         context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
-    //             setNotTicketLabels(res);
-    //         })    
-    //     })
-    // }
+    const createTicketHandler = (ticketName: string, ticketDescription: string) => {
+        if (!ticketName || ticketName === '') { toast.error('Ticket name cannot be empty'); return; }
+        const ticket: TicketBody = { 
+            project_id: context.getProject(),
+            description: ticketDescription,
+            name: ticketName,
+            topic_id: topic.id
+        }
+        context.apiClient.createTicket(ticket).then(() => {
+            context.apiClient.getAssignedToTopicTicket(topic.id).then((res) => {
+                setAssignedTickets(res);
+            })
+        })
+    }
 
     const commentHandler = () => {
         if (!commentText || commentText === '') toast.error('Cannot post empty comment');
@@ -92,14 +87,6 @@ export const TopicPage = (props: TopicPageProps): JSX.Element => {
             })
         })
     }
-
-    // const changeTicketStatusHandler = (newStatus: 'Open' | 'Closed') => {
-    //     context.apiClient.changeTicketStatus(ticket.id, newStatus).then(() => {
-    //         context.apiClient.getTicket(ticket.id).then((res) => {
-    //             setTicket(res);
-    //         })
-    //     })
-    // }
 
     if (props.loading) return <LoadingPage />
     return (
@@ -127,15 +114,20 @@ export const TopicPage = (props: TopicPageProps): JSX.Element => {
 
                 <Typography variant='h4' sx={{ mt: 3, mb: 2 }}>Notes:</Typography>
                 <div className=" w-full grid grid-cols-5 gap-y-8 justify-items-center mb-10">
-                    <ItemCard title='bad names' ></ItemCard>
-                    <ItemCard title='it is really bad' ></ItemCard>
-                    <CreateItemCard></CreateItemCard>
+                    {notes.map((note) => <ItemCard title={note.title}></ItemCard>)}
+                    <ChecklistDialog buttonName='add notes'
+                        onDialogSubmit={addNotesToTopicHandler}
+                        layoutList={notTopicNotes.map((note) => { 
+                            return { id: note.id, element: <div>{note.title}</div> 
+                        }})}></ChecklistDialog>
                 </div>
 
                 <Typography variant='h4' sx={{ mb: 2 }}>Assigned ticket:</Typography>
-                <div className='border rounded-lg h-32'>
-                    <TicketCard ticket={{ name: 'Organize this process', description: 'fire all bad users', id: 0, project_id: 0, created_at: '5/10/2023', updated_at: '5/10/2023' }}></TicketCard>
+                <div className='border mb-2'>
+                    {/* <TicketCard ticket={{ name: 'Organize this process', description: 'fire all bad users', id: 0, project_id: 0, created_at: '5/10/2023', updated_at: '5/10/2023' }}></TicketCard> */}
+                    {assignedTickets && assignedTickets.map((ticket) => <TicketCard ticket={ticket}></TicketCard>)}
                 </div>
+                <CreateTicketDialog onCreateButtonClick={createTicketHandler}></CreateTicketDialog>
 
                 <Typography variant='h4' sx={{ mt: 4 }}>Discussion: </Typography>
 

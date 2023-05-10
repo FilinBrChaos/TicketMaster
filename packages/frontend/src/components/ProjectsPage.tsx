@@ -50,7 +50,6 @@ export default function ProjectsPage(props: ProjectsPageProps): JSX.Element {
                         <ItemCard 
                             title={project.name}
                             description={project.description}
-                            color='red'
                             onClick={() => { onProjectCardClickHandler(project.id) }}
                             onDeleteClick={() => { deleteProjectHandler(project.id) }}
                             key={v4()}></ItemCard>) :

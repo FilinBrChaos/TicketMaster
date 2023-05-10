@@ -1,3 +1,5 @@
+import { exitCode } from "process";
+
 export interface ProjectType {
 
 }
@@ -141,8 +143,21 @@ export interface NoteBody extends ProjectType {
     topic_id?: number;
 }
 
-export interface TopicRating {
-    id?: number;
+export interface TopicNote extends TopicNoteBody {
+    id: number
+}
+
+export interface TopicNoteBody extends ProjectType {
+    note_id: number;
+    topic_id: number;
+}
+
+export interface TopicRating extends TopicRatingBody {
+    id: number;
+    score_sum: number;
+}
+
+export interface TopicRatingBody extends ProjectType {
     score: number;
     user_id: number;
     topic_id: number;

@@ -1,5 +1,5 @@
 import { FC, createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody, Retro, RetroBody, Note, NoteBody, Topic, TopicBody } from '../../../lib/projectTypes';
+import { CommentBody, Comment, Label, LabelBody, Project, ProjectBody, Ticket, TicketBody, User, UserBody, Retro, RetroBody, Note, NoteBody, Topic, TopicBody, TopicRating } from '../../../lib/projectTypes';
 
 
 interface APIClient {
@@ -15,6 +15,7 @@ interface APIClient {
     
     getTickets: (projectId: number, queryParams?: any) => Promise<Ticket[]>;
     getTicket: (ticketId: number) => Promise<Ticket>;
+    getAssignedToTopicTicket: (topicId: number) => Promise<Ticket[]>;
     createTicket: (ticket: TicketBody) => Promise<number>;
     deleteTicket: (ticketId: number) => Promise<number>;
     changeTicketStatus: (ticketId: number, newStatus: 'Open' | 'Closed') => Promise<number>;
@@ -55,6 +56,13 @@ interface APIClient {
     getTicketLabels: (ticketId: number) => Promise<Label[]>;
     getNotTicketLabels: (ticketId: number, projectId: number) => Promise<Label[]>;
     removeLabelFromTicket: (ticketId: number, labelId: number) => Promise<number>;
+
+    getTopicScore: (topicId: number, userId: number) => Promise<TopicRating | null>;
+    changeTopicScore: (topicId: number, userId: number, newScore: number) => Promise<void>;
+
+    addNotesToTopic: (topicId: number, notesIds: number[]) => Promise<void>;
+    getTopicNotes: (topicId: number) => Promise<Note[]>;
+    getNotTopicNotes: (topicId: number, retroId: number) => Promise<Note[]>;
 }
 
 export interface ProjectContextProps {
@@ -97,6 +105,9 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         getTicket: async () => {
+            throw Error('not implemented')
+        },
+        getAssignedToTopicTicket: async () => {
             throw Error('not implemented')
         },
         createTicket: async () => {
@@ -193,6 +204,21 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         removeLabelFromTicket: async () => {
+            throw Error('not implemented')
+        },
+        getTopicScore: async () => {
+            throw Error('not implemented')
+        },
+        changeTopicScore: async () => {
+            throw Error('not implemented')
+        },
+        addNotesToTopic: async () => {
+            throw Error('not implemented')
+        },
+        getNotTopicNotes: async () => {
+            throw Error('not implemented')
+        },
+        getTopicNotes: async () => {
             throw Error('not implemented')
         }
     },
@@ -353,6 +379,16 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             const json = await response.json();
             if (response.ok) {
                 return json.ticket;
+            } else {
+                throw json;
+            }
+        }
+
+        const getAssignedToTopicTicket = async (topicId: number): Promise<Ticket[]> => {
+            const response = await getRequest(`/assigned-tickets?topic_id=${topicId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.tickets;
             } else {
                 throw json;
             }
@@ -681,6 +717,59 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
                 throw json;
             }
         };
+
+        const getTopicScore = async (topicId: number, userId: number): Promise<TopicRating | null> => {
+            const response = await getRequest(`/topic-scores?topic_id=${topicId}&user_id=${userId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.topic_rating;
+            } else {
+                throw json;
+            }
+        };
+
+        const changeTopicScore = async (topicId: number, userId: number, newScore: number): Promise<void> => {
+            const response = await postRequest(`/topic-scores`, JSON.stringify({ topic_id: topicId, user_id: userId, score: newScore }));
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        };
+
+        const addNotesToTopic = async (topicId: number, notesIds: number[]): Promise<void> => {
+            const postObj = {
+                topic_notes: notesIds.map((noteId) => { return { note_id: noteId, topic_id: topicId } })
+            }
+            const response = await postRequest(`/add-notes-to-topics`, JSON.stringify(postObj));
+            const json = await response.json();
+            if (!response.ok) {
+                throw json;
+            }
+        };
+        
+        const getTopicNotes = async (topicId: number): Promise<Note[]> => {
+            const response = await getRequest(`/topic-notes?topic_id=${topicId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.notes;
+            } else {
+                throw json;
+            }
+        };
+        
+        const getNotTopicNotes = async (topicId: number, retroId: number): Promise<Note[]> => {
+            const response = await getRequest(`/not-topic-notes?topic_id=${topicId}&retro_id=${retroId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.notes;
+            } else {
+                throw json;
+            }
+        };
+    
+    
     
         return{
             getUsers,
@@ -693,6 +782,7 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             deleteProject,
             getTickets,
             getTicket,
+            getAssignedToTopicTicket,
             createTicket,
             changeTicketStatus,
             deleteTicket,
@@ -724,7 +814,12 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             getTicketLabels,
             getNotTicketLabels,
             addLabelsToTicket,
-            removeLabelFromTicket
+            removeLabelFromTicket,
+            getTopicScore,
+            changeTopicScore,
+            addNotesToTopic,
+            getNotTopicNotes,
+            getTopicNotes
         }
     }, []);
 

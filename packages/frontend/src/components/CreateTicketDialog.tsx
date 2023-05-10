@@ -25,7 +25,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps): JSX.Element 
                         minRows={2} 
                         onChange={(e) => { setTicketDescription(e.target.value) }} />
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{ padding: 2 }}>
                     <Button variant="contained" onClick={() => {
                         setOpenDialog(false);
                         if (props.onCreateButtonClick) props.onCreateButtonClick(ticketName, ticketDescription);

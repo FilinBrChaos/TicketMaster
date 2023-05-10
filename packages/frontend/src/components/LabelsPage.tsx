@@ -40,7 +40,7 @@ export const LabelsPage = (props: LabelsPageProps): JSX.Element => {
     if (props.loading) return <LoadingPage></LoadingPage>
     return (
         <div className="flex flex-col items-center h-screen">
-            <UnderlineProjHeader title='todo'></UnderlineProjHeader>
+            <UnderlineProjHeader title='Labels'></UnderlineProjHeader>
             <div className="flex flex-col items-center justify-center h-[86%] w-[70%] mt-[2%]">
                 <div className='flex flex-col items-center justify-center'>
                     { labels && labels.map(label => <div className='mb-3'>

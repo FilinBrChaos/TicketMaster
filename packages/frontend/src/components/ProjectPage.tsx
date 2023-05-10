@@ -2,8 +2,8 @@ import { LoadingPage } from "./LoadingPage";
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext';
 import { UnderlineProjHeader } from "./UnderlineProjHeader";
-import { Box, Button, Dialog, IconButton, Typography, DialogTitle, DialogActions, DialogContent, Checkbox, TextField } from '@mui/material';
-import { ArrowDropDown, ArrowDropUp, North, Search, Sort } from "@mui/icons-material";
+import { Box, Button, Typography, TextField } from '@mui/material';
+import { ArrowDropDown, ArrowDropUp, Search } from "@mui/icons-material";
 import { TicketCard } from "./TicketCard";
 import { palette } from '../context/ProjectThemeProvider';
 import { useEffect, useState } from 'react';
@@ -68,7 +68,7 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
     if (props.loading || !props.project) return <LoadingPage />
     return (
         <div className="flex flex-col items-center h-screen">
-            <UnderlineProjHeader title={props.project.name}></UnderlineProjHeader>
+            <UnderlineProjHeader title="Tickets"></UnderlineProjHeader>
             <div className="flex flex-col h-[86%] w-[70%] mt-[2%]">
                 <div className="flex w-full flex-row items-center justify-between h-[7%] mb-3">
                     <div className="flex flex-row items-center">

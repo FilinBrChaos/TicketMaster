@@ -173,7 +173,7 @@ CREATE TRIGGER updateNoteUpdatedAt BEFORE UPDATE
 
 create TABLE "topic_rating" (
   id bigserial PRIMARY KEY,
-  score INT NOT NULL,
+  score INT,
   user_id bigserial,
   topic_id bigserial,
   CONSTRAINT fk_topic_id 
@@ -183,6 +183,20 @@ create TABLE "topic_rating" (
   CONSTRAINT fk_user_id 
   FOREIGN KEY (user_id) 
   REFERENCES "user" (id)
+  ON DELETE CASCADE
+);
+
+create TABLE "topic_note" (
+  id bigserial PRIMARY KEY,
+  note_id bigserial,
+  topic_id bigserial,
+  CONSTRAINT fk_topic_id 
+  FOREIGN KEY (topic_id) 
+  REFERENCES topic (id)
+  ON DELETE CASCADE,
+  CONSTRAINT fk_note_id 
+  FOREIGN KEY (note_id) 
+  REFERENCES "note" (id)
   ON DELETE CASCADE
 );
 

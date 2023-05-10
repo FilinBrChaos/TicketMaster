@@ -1,20 +1,65 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, Typography, Box } from '@mui/material';
 import { palette } from '../context/ProjectThemeProvider';
 import { Delete, Help, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import { useProjectContext } from '../context/ProjectContext';
 
 interface TopicCardProps {
+    id: number;
     title?: string;
     color?: string;
     description?: string;
     onClick?: () => void;
     onDeleteClick?: () => void;
+    onIncreaseScoreClick?: () => void;
+    onDecreaseScoreClick?: () => void;
 }
 
 export function TopicCard(props: TopicCardProps): JSX.Element {
     const [ openDeleteProjectDialog, setOpenDeleteProjectDialog ] = useState(false);
     const [ popoverAnchor, setPopoverAnchor ] = useState<HTMLButtonElement | null>(null);
     const cardColor = props.color && props.color !== '' ? props.color : 'rgb(241, 245, 249)';
+    const [ score, setScore ] = useState(0);
+    const [ userScore, setUserScore ] = useState(0);
+    const context = useProjectContext();
+
+    useEffect(() => {
+        context.apiClient.getTopicScore(props.id, context.getUser()).then((res) => {
+            if (res) {
+                setScore(res.score_sum);
+                setUserScore(res.score);
+            } else {
+                setScore(0);
+                setUserScore(0);
+            }
+        })
+    }, [])
+
+    const handleIncreaseScore = () => {
+        if (userScore < 5){
+            context.apiClient.changeTopicScore(props.id, context.getUser(), userScore + 1).then((res) => {
+                context.apiClient.getTopicScore(props.id, context.getUser()).then((res) => {
+                    if (res) {
+                        setScore(res.score_sum);
+                        setUserScore(res.score);
+                    }
+                })    
+            })
+        }
+    }
+
+    const handleDecreaseScore = () => {
+        if (score >= 1 && userScore >= 1) {
+            context.apiClient.changeTopicScore(props.id, context.getUser(), userScore - 1).then((res) => {
+                context.apiClient.getTopicScore(props.id, context.getUser()).then((res) => {
+                    if (res) {
+                        setScore(res.score_sum);
+                        setUserScore(res.score);
+                    }
+                })    
+            })
+        }
+    }
 
     const popoverEnter = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setPopoverAnchor(e.currentTarget);
@@ -33,11 +78,14 @@ export function TopicCard(props: TopicCardProps): JSX.Element {
                 <IconButton sx={{ width: 30, height: 30 }} onClick={() => { setOpenDeleteProjectDialog(true) }}><Delete /></IconButton>
             </div>
             <div className='flex flex-row justify-between items-start w-full'>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: palette.text.secondary }}>
-                    <KeyboardArrowUp />
-                    12
-                    <KeyboardArrowDown />
-                </Box>
+                <div className='flex flex-row items-center'>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: palette.text.secondary }}>
+                        <IconButton onClick={handleIncreaseScore}><KeyboardArrowUp /></IconButton>
+                        {score}
+                        <IconButton onClick={handleDecreaseScore}><KeyboardArrowDown /></IconButton>
+                    </Box>
+                    +{userScore}
+                </div>
                 <IconButton onClick={popoverEnter} aria-describedby={popoverId}><Help /></IconButton>
             </div>
             <Popover 

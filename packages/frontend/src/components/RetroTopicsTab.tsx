@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import { useProjectContext } from "../context/ProjectContext";
 import { CreateItemCard } from "./CreateItemCard";
-import { ItemCard } from "./ItemCard";
-import { Topic, TopicBody } from "../../../lib/projectTypes";
+import { Topic, TopicBody, TopicRating } from '../../../lib/projectTypes';
 import { TopicCard } from './TopicCard';
 
 interface RetroTopicsTabProps {
@@ -13,6 +12,7 @@ interface RetroTopicsTabProps {
 
 export const RetroTopicsTab = (props: RetroTopicsTabProps): JSX.Element => {
     const [ topics, setTopics ] = useState(props.topics);
+    const [ topicsRatings, setTopicsRatings ] = useState<TopicRating[]>([]);
     const params = useParams();
     const { apiClient } = useProjectContext();
     const navigate = useNavigate();
@@ -22,6 +22,7 @@ export const RetroTopicsTab = (props: RetroTopicsTabProps): JSX.Element => {
             setTopics(res);
         })
     }, [])
+        console.log('topics: ' + JSON.stringify(topics) + ' topics ratings ' + JSON.stringify(topicsRatings));
 
     const deleteTopicHandler = (topicId: number) => {
         apiClient.deleteTopic(topicId).then(() => {
@@ -48,6 +49,7 @@ export const RetroTopicsTab = (props: RetroTopicsTabProps): JSX.Element => {
         <div className=" w-full grid grid-cols-3 gap-y-8 justify-items-center">
             {topics.length > 0 ? topics.map((topic) => 
                     <TopicCard 
+                        id={topic.id}
                         key={v4()}
                         title={topic.name} 
                         description={topic.description}

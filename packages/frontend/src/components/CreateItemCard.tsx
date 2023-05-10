@@ -31,8 +31,9 @@ export function CreateItemCard(props: ItemCardProps): JSX.Element {
                     minRows={2} 
                     onChange={(e) => { setDialogProjectDescription(e.target.value) }} />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => { 
+                <DialogActions sx={{ padding: 2 }}>
+                    <Button variant="contained"
+                        onClick={() => { 
                         setOpenCreateProjectDialog(false);
                         if (props.onDialogCreateClick) 
                             props.onDialogCreateClick(dialogProjectName, dialogProjectDescription);

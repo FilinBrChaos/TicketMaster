@@ -26,8 +26,9 @@ export const CreateLabelDialog = (props: CreateLabelDialogProps): JSX.Element =>
                         else setLabelName(e.target.value);
                     }}></TextField>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => { 
+                <DialogActions sx={{ padding: 2 }}>
+                    <Button variant="contained"
+                        onClick={() => { 
                         setOpen(false);
                         if (props.onCreateButtonClick) props.onCreateButtonClick(labelName, newLabelColor);
                     }}>create</Button>

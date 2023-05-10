@@ -189,6 +189,21 @@ functions:
           method: GET
           cors: true
 
+  get-assigned-to-topic:
+    handler: src/ticket/get-assigned-to-topic/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: assigned-tickets
+          method: GET
+          cors: true
+
   ticket-change-status:
     handler: src/ticket/change-status/index.index
     timeout: 60
@@ -640,6 +655,81 @@ functions:
       - http:
           path: remove-label-from-ticket
           method: DELETE
+          cors: true
+
+  get-topics-scores:
+    handler: src/topic-score/get-scores/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: topic-scores
+          method: GET
+          cors: true
+
+  increase-topic-score:
+    handler: src/topic-score/change-score/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: topic-scores
+          method: POST
+          cors: true
+
+  add-notes-to-topics:
+    handler: src/topic-notes/add-notes-to-topics/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: add-notes-to-topics
+          method: POST
+          cors: true
+
+  get-not-topic-notes:
+    handler: src/topic-notes/get-not-topic-notes/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: not-topic-notes
+          method: GET
+          cors: true
+
+  get-topic-notes:
+    handler: src/topic-notes/get-topic-notes/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: topic-notes
+          method: GET
           cors: true
 
 

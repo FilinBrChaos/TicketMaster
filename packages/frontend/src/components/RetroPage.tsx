@@ -16,7 +16,7 @@ export const RetroPage = (props: RetroPageProps): JSX.Element => {
 
     return (
         <div className="flex flex-col items-center w-screen h-screen">
-            <UnderlineProjHeader title="todo"></UnderlineProjHeader>
+            <UnderlineProjHeader title="Retro"></UnderlineProjHeader>
             <RetroTabsSelector />
 
             <div className="h-[84%] w-[70%] mt-[2%]">

@@ -10,7 +10,7 @@ import { CommentCard } from './CommentCard';
 import { v4 } from 'uuid';
 import { ChecklistDialog } from './ChecklistDialog';
 import { LabelCard } from './LabelCard';
-import { Ticket, User, Label, CommentBody, Comment } from '../../../lib/projectTypes';
+import { Ticket, User, Label, CommentBody, Comment, Topic } from '../../../lib/projectTypes';
 
 interface TicketPageProps {
     ticket: Ticket;
@@ -28,6 +28,7 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
     const [ ticketLabels, setTicketLabels ] = useState<Label[]>([]);
     const [ notTicketLabels, setNotTicketLabels ] = useState<Label[]>([]);
     const [ commentText, setCommentText ] = useState('');
+    const [ parentTopic, setParentTopic ] = useState<Topic | null>(null);
     const ticketDate = new Date(ticket.created_at.replace(' ', 'T'));
 
     useEffect(() => {
@@ -46,6 +47,9 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
         })
         context.apiClient.getNotTicketLabels(ticket.id, context.getProject()).then((res) => {
             setNotTicketLabels(res);
+        })
+        if (ticket.topic_id) context.apiClient.getTopic(ticket.topic_id).then((res) => {
+            setParentTopic(res)
         })
     }, []);
 
@@ -216,10 +220,9 @@ export const TicketPage = (props: TicketPageProps): JSX.Element => {
                                     changeTicketStatusHandler(ticket.state?.toString() === 'Closed' ? 'Open' : 'Closed') 
                                 }}>Change</Button>
                     </div>
-                    <div className=" py-4 border-b">
-                        <Typography>Topic</Typography>
-                        <Button variant="contained">add</Button>
-
+                    <div className="flex flex-row items-center py-4 border-b">
+                        <Typography>Parent topic: </Typography>
+                        { parentTopic ? <Typography variant='h5' sx={{ ml: 3 }}>{parentTopic.name}</Typography> : null }
                     </div>
                 </div>
             </div>

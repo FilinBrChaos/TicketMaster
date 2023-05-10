@@ -80,8 +80,8 @@ export default function RegisterPage(props: RegisterPageProps): JSX.Element {
                     }}>change</Button>
                     <TextField label="name" sx={{ mt: 5 }} onChange={(e) => { setNameValue(e.target.value) }} />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={addUserButtonHandler}>Add</Button>
+                <DialogActions sx={{ padding: 2 }}>
+                    <Button variant="contained" onClick={addUserButtonHandler}>Add</Button>
                     <Button onClick={() => { setOpenCreateUserDialog(false); }}>Cancel</Button>
                 </DialogActions>
             </Dialog>

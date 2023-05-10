@@ -46,7 +46,7 @@ export const RetrosPage = (props: RetrosPageProps):JSX.Element => {
 
     return (
         <div className="flex flex-col items-center h-screen">
-            <UnderlineProjHeader title="todo"></UnderlineProjHeader>
+            <UnderlineProjHeader title="Retros"></UnderlineProjHeader>
             <div className="w-9/12 h-5/6 mt-10">
                 <div className=" w-full grid grid-cols-3 gap-y-8 justify-items-center">
                     {retros.length > 0 ? 
