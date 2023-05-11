@@ -11,6 +11,7 @@ For start whole project run (in root folder!!):
 
 1. `docker compose up`
 2. `sh scripts/migrate-schema.sh`(for mac)
+3. `sh scripts/start-frontend`(for mac)
 
 
 ### Developer notes

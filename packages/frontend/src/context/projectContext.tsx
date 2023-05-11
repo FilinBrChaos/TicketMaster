@@ -63,6 +63,7 @@ interface APIClient {
     addNotesToTopic: (topicId: number, notesIds: number[]) => Promise<void>;
     getTopicNotes: (topicId: number) => Promise<Note[]>;
     getNotTopicNotes: (topicId: number, retroId: number) => Promise<Note[]>;
+    removeNoteFromTopic: (topicId: number, noteId: number) => Promise<number>;
 }
 
 export interface ProjectContextProps {
@@ -219,6 +220,9 @@ const ProjectContext = createContext<ProjectContextProps>({
             throw Error('not implemented')
         },
         getTopicNotes: async () => {
+            throw Error('not implemented')
+        },
+        removeNoteFromTopic: async () => {
             throw Error('not implemented')
         }
     },
@@ -769,7 +773,16 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             }
         };
     
-    
+        const removeNoteFromTopic = async (topicId: number, noteId: number): Promise<number> => {
+            const response = await deleteRequest(`/remove-note-from-topic?topic_id=${topicId}&note_id=${noteId}`);
+            const json = await response.json();
+            if (response.ok) {
+                return json.id;
+            } else {
+                throw json;
+            }
+        };
+
     
         return{
             getUsers,
@@ -819,7 +832,8 @@ export const ProjectContextProvider: FC<ProjectContextProviderProps> = ({ childr
             changeTopicScore,
             addNotesToTopic,
             getNotTopicNotes,
-            getTopicNotes
+            getTopicNotes,
+            removeNoteFromTopic
         }
     }, []);
 

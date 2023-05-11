@@ -9,7 +9,7 @@ export const index: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
   try {
     const topicId = parseRequestString(event);
 
-    const dbOut = await deleteWithId(pool, 'note', topicId);
+    const dbOut = await deleteWithId(pool, 'topic', topicId);
 
     return lambdaResponse(200, { id: dbOut.rows[0] });
   } catch (e) {

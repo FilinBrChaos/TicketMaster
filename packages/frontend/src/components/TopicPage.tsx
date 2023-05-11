@@ -58,6 +58,17 @@ export const TopicPage = (props: TopicPageProps): JSX.Element => {
         })
     }
 
+    const removeNoteFromTopic = (noteId: number) => {
+        context.apiClient.removeNoteFromTopic(topic.id, noteId).then(() => {
+            context.apiClient.getTopicNotes(topic.id).then((res) => {
+                setNotes(res);
+            })
+            context.apiClient.getNotTopicNotes(topic.id, context.getProject()).then((res) => {
+                setNotTopicNotes(res);
+            })    
+        })
+    }
+
     const createTicketHandler = (ticketName: string, ticketDescription: string) => {
         if (!ticketName || ticketName === '') { toast.error('Ticket name cannot be empty'); return; }
         const ticket: TicketBody = { 
@@ -114,7 +125,7 @@ export const TopicPage = (props: TopicPageProps): JSX.Element => {
 
                 <Typography variant='h4' sx={{ mt: 3, mb: 2 }}>Notes:</Typography>
                 <div className=" w-full grid grid-cols-5 gap-y-8 justify-items-center mb-10">
-                    {notes.map((note) => <ItemCard title={note.title}></ItemCard>)}
+                    {notes.map((note) => <ItemCard onDeleteClick={() => { removeNoteFromTopic(note.id) }} title={note.title}></ItemCard>)}
                     <ChecklistDialog buttonName='add notes'
                         onDialogSubmit={addNotesToTopicHandler}
                         layoutList={notTopicNotes.map((note) => { 

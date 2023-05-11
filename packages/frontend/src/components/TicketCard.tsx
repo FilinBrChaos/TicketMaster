@@ -1,14 +1,15 @@
-import { Box, Typography } from "@mui/material"
+import { Box, IconButton, Typography } from "@mui/material"
 import { palette } from '../context/ProjectThemeProvider';
 import { Link, useParams } from 'react-router-dom';
 import { Ticket } from '../../../proj-api/dist/lib/projectTypes';
-import { Adjust, CheckCircleOutline } from "@mui/icons-material";
+import { Adjust, CheckCircleOutline, Delete } from "@mui/icons-material";
 
 interface TicketCardProps {
     ticket: Ticket;
+    onDeleteClick?: () => void;
 }
 
-export const TicketCard = ({ ticket }: TicketCardProps): JSX.Element => {
+export const TicketCard = ({ ticket, onDeleteClick }: TicketCardProps): JSX.Element => {
     const { id } = useParams();
     const ticketDate = new Date(ticket.created_at.replace(' ', 'T'));
 
@@ -36,7 +37,10 @@ export const TicketCard = ({ ticket }: TicketCardProps): JSX.Element => {
                 </div>
             </div>
 
-            <Typography>{ticketDate.toLocaleDateString()}</Typography>
+            <div className="flex flex-col items-end">
+                <Typography>{ticketDate.toLocaleDateString()}</Typography>
+                <IconButton onClick={() => { if (onDeleteClick) onDeleteClick() }} color="primary"><Delete /></IconButton>
+            </div>
         </Box>
     )
 }

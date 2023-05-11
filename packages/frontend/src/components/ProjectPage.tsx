@@ -58,6 +58,14 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
         })
     }
 
+    const deleteTicketHandler = (ticketId: number) => {
+        context.apiClient.deleteTicket(ticketId).then(() => {
+            context.apiClient.getTickets(context.getProject(), createParamsSequence(getPageSortParams(searchParams))).then((res) => {
+                setTickets(res)
+            })
+        })
+    }
+
     const textSearchButtonHandler = () => {
         let currentParams = getPageSortParams(searchParams);
         currentParams.byPattern = searchText;
@@ -90,7 +98,7 @@ export const ProjectPage = (props: ProjectPageProps): JSX.Element => {
                         </div>
                         <SortByDateButton></SortByDateButton>
                     </Box>
-                    {tickets && tickets.map((ticket) => <TicketCard ticket={ticket} key={v4()}></TicketCard>)}
+                    {tickets && tickets.map((ticket) => <TicketCard onDeleteClick={() => { deleteTicketHandler(ticket.id) }} ticket={ticket} key={v4()}></TicketCard>)}
                     
                 </Box>
             </div>

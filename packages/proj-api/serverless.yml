@@ -732,6 +732,21 @@ functions:
           method: GET
           cors: true
 
+  remove-note-from-topic:
+    handler: src/topic-notes/remove-note-from-topic/index.index
+    timeout: 60
+    environment:
+      postgresHost:                     ${file(env/api-config.json):postgresHost}
+      postgresPort:                     ${file(env/api-config.json):postgresPort}
+      postgresDatabase:                 ${file(env/api-config.json):postgresDatabase}
+      postgresUser:                     ${file(env/api-config.json):postgresUser}
+      postgresPassword:                 ${file(env/api-config.json):postgresPassword}
+    events:
+      - http:
+          path: remove-note-from-topic
+          method: DELETE
+          cors: true
+
 
 plugins:
   - serverless-esbuild
